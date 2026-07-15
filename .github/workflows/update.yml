@@ -1,0 +1,45 @@
+name: Update Typhoon Forecast Webpage
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # 每天每 12 小時（國際時間 00:00 和 12:00）自動運行一次
+  workflow_dispatch:      # 允許你在 GitHub 網頁上手動點擊按鈕立即執行
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-style: '3.9'
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libeccodes-dev
+
+    - name: Install Python Dependencies
+      run: |
+        pip install ecmwf-opendata xarray cfgrib pandas numpy geopy plotly
+
+    - name: Run Analysis Script
+      run: python build_report.py
+
+    - name: Deploy index.html to Hugging Face Spaces
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }} # 你的 Hugging Face Token，確保擁有寫入權限
+      run: |
+        git config --global user.email "bot@github.com"
+        git config --global user.name "GitHub Action Bot"
+        # 複製 index.html 並強制推送到 Hugging Face Static Space
+        git clone https://huggingface.co/spaces/【填入你的HF用戶名】/【填入你的Space名稱】 hf_space
+        cp index.html hf_space/index.html
+        cd hf_space
+        git add index.html
+        git commit -m "Update typhoon forecast: $(date)" || exit 0
+        git push https://:$HF_TOKEN@huggingface.co/spaces/【填入你的HF用戶名】/【填入你的Space名稱】 main --force
