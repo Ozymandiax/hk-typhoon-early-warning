@@ -32,14 +32,22 @@ jobs:
 
     - name: Deploy index.html to Hugging Face Spaces
       env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }} # 你的 Hugging Face Token，確保擁有寫入權限
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         git config --global user.email "bot@github.com"
         git config --global user.name "GitHub Action Bot"
-        # 複製 index.html 並強制推送到 Hugging Face Static Space
-        git clone https://huggingface.co/spaces/【填入你的HF用戶名】/【填入你的Space名稱】 hf_space
+        
+        # 【修正關鍵】：在 clone 的網址中，直接使用 Token 作為密碼驗證
+        # 注意：請把下面的 【你的HF用戶名】和【你的Space名稱】替換成你真實的名稱（保留 / 符號，刪除括號）
+        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning hf_space
+        
+        # 複製新生成的 index.html 到剛剛 clone 下來的資料夾中
         cp index.html hf_space/index.html
+        
         cd hf_space
         git add index.html
+        # 如果檔案沒有變化，git commit 會報錯，這裡用 || exit 0 安全退出
         git commit -m "Update typhoon forecast: $(date)" || exit 0
-        git push https://:$HF_TOKEN@huggingface.co/spaces/【填入你的HF用戶名】/【填入你的Space名稱】 main --force
+        
+        # 推送回 Hugging Face
+        git push origin main
