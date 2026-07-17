@@ -11,12 +11,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # 升級到 v4 (全面支援 Node 24)
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5  # 升級到 v5 (全面支援 Node 24)
       with:
-        python-version: '3.9'
+        python-version: '3.10'
 
     - name: Install Dependencies
       run: |
@@ -32,8 +32,8 @@ jobs:
         git config --global user.email "bot@github.com"
         git config --global user.name "GitHub Action Bot"
         
-        # 替換為你的真實 HF 帳戶名和 Space 名
-        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning hf_space
+        # 複製並更新 Hugging Face Space (記得替換為你的真實用戶名與 Space 名稱)
+        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/【你的HF用戶名】/【你的Space名稱】 hf_space
         
         cp index.html hf_space/index.html
         cd hf_space
