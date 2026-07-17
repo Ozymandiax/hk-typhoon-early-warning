@@ -19,7 +19,7 @@ except Exception as e:
     print(f"❌ API 請求失敗: {e}")
     exit(1)
 
-print("⚡ 數據獲取成功！正在進行更嚴格的物理氣壓梯度過濾...")
+print("⚡ 數據獲取成功！正在進行物理氣壓梯度過濾...")
 
 hourly_ec = res_ec['hourly']
 times = hourly_ec['time']
@@ -30,62 +30,58 @@ ec_press_keys = [k for k in hourly_ec.keys() if "pressure_msl_member" in k]
 gfs_wind_keys = [k for k in res_gfs['hourly'].keys() if "wind_speed_10m_member" in k]
 gfs_press_keys = [k for k in res_gfs['hourly'].keys() if "pressure_msl_member" in k]
 
-# 預先將所有數據提取為 numpy 矩陣，方便進行時間序列計算
-ec_winds_matrix = np.array([[hourly_ec[k][idx] for k in ec_wind_keys] for idx in range(len(times))]) # [時間, 成員]
-ec_press_matrix = np.array([[hourly_ec[k][idx] / 100.0 for k in ec_press_keys] for idx in range(len(times))]) # 轉 hPa
+# 核心修正：Open-Meteo 氣壓單位本來就是 hPa，不用除以 100
+ec_winds_matrix = np.array([[hourly_ec[k][idx] for k in ec_wind_keys] for idx in range(len(times))]) 
+ec_press_matrix = np.array([[hourly_ec[k][idx] for k in ec_press_keys] for idx in range(len(times))]) 
 
 gfs_winds_matrix = np.array([[res_gfs['hourly'][k][idx] for k in gfs_wind_keys] for idx in range(len(times))])
-gfs_press_matrix = np.array([[res_gfs['hourly'][k][idx] / 100.0 for k in gfs_press_keys] for idx in range(len(times))])
+gfs_press_matrix = np.array([[res_gfs['hourly'][k][idx] for k in gfs_press_keys] for idx in range(len(times))])
 
 results = []
-
-# 設定基準正常氣壓 (標準大氣壓為 1013.25 hPa，盛夏香港一般在 1008-1010 hPa)
 BASE_PRESSURE = 1010.0
 
 for idx, t_str in enumerate(times):
     dt = datetime.strptime(t_str, "%Y-%m-%dT%H:%M")
     display_time = dt.strftime("%m月%d日 %H:00")
     
-    # 獲取當前時間步長的所有成員數據
     ec_winds = ec_winds_matrix[idx]
     ec_press = ec_press_matrix[idx]
     
     gfs_winds = gfs_winds_matrix[idx]
     gfs_press = gfs_press_matrix[idx]
     
-    # 計算 24 小時前的氣壓（24 小時前對應往前回溯 24 個 step）
+    # 24 小時前對應回溯 24 個步長
     prev_idx = max(0, idx - 24)
     ec_press_prev = ec_press_matrix[prev_idx]
     gfs_press_prev = gfs_press_matrix[prev_idx]
     
-    # 24小時內的氣壓降幅 (下降值為正數)
     ec_press_drop = ec_press_prev - ec_press
     gfs_press_drop = gfs_press_prev - gfs_press
     
-    # --- 升級版嚴格判定邏輯 ---
-    # T1：香港氣壓跌破 1002 hPa，且相較於標準大氣壓有顯著降幅（>8 hPa），或 24小時內氣壓驟降超過 3 hPa
-    ec_t1_cond = (ec_press <= 1002) & ((BASE_PRESSURE - ec_press >= 8) | (ec_press_drop >= 3))
+    # --- 物理篩選邏輯 ---
+    # T1：氣壓 <= 1004 hPa 且 (總降幅>=6 hPa 或 24小時突降>=2.5 hPa)
+    ec_t1_cond = (ec_press <= 1004) & ((BASE_PRESSURE - ec_press >= 6) | (ec_press_drop >= 2.5))
     prob_t1_ec = float(np.sum(ec_t1_cond) / len(ec_press) * 100) if len(ec_press) > 0 else 0
     
-    # T3：氣壓跌破 1000 hPa，且香港本地風速（含1.1倍地形修正）達到強風程度（>= 41 km/h）
-    ec_t3_cond = (ec_press <= 1000) & (ec_winds * 1.1 >= 41)
+    # T3：氣壓 <= 1002 hPa 且 風速 >= 41 km/h
+    ec_t3_cond = (ec_press <= 1002) & (ec_winds * 1.1 >= 41)
     prob_t3_ec = float(np.sum(ec_t3_cond) / len(ec_winds) * 100) if len(ec_winds) > 0 else 0
     
-    # T8：氣壓跌破 995 hPa（颱風核心迫近），且風速（含1.2倍地形修正）達到烈風程度（>= 63 km/h）
-    ec_t8_cond = (ec_press <= 995) & (ec_winds * 1.2 >= 63)
+    # T8：氣壓 <= 997 hPa 且 風速 >= 63 km/h
+    ec_t8_cond = (ec_press <= 997) & (ec_winds * 1.2 >= 63)
     prob_t8_ec = float(np.sum(ec_t8_cond) / len(ec_winds) * 100) if len(ec_winds) > 0 else 0
 
-    # GFS 同樣套用嚴格判定邏輯
-    gfs_t1_cond = (gfs_press <= 1002) & ((BASE_PRESSURE - gfs_press >= 8) | (gfs_press_drop >= 3))
+    # GFS
+    gfs_t1_cond = (gfs_press <= 1004) & ((BASE_PRESSURE - gfs_press >= 6) | (gfs_press_drop >= 2.5))
     prob_t1_gfs = float(np.sum(gfs_t1_cond) / len(gfs_press) * 100) if len(gfs_press) > 0 else 0
     
-    gfs_t3_cond = (gfs_press <= 1000) & (gfs_winds * 1.1 >= 41)
+    gfs_t3_cond = (gfs_press <= 1002) & (gfs_winds * 1.1 >= 41)
     prob_t3_gfs = float(np.sum(gfs_t3_cond) / len(gfs_winds) * 100) if len(gfs_winds) > 0 else 0
     
-    gfs_t8_cond = (gfs_press <= 995) & (gfs_winds * 1.2 >= 63)
+    gfs_t8_cond = (gfs_press <= 997) & (gfs_winds * 1.2 >= 63)
     prob_t8_gfs = float(np.sum(gfs_t8_cond) / len(gfs_winds) * 100) if len(gfs_winds) > 0 else 0
 
-    # 權重集成 (60% EC + 40% GFS)
+    # 權重集成
     prob_t1_ensemble = round((prob_t1_ec * 0.6) + (prob_t1_gfs * 0.4), 1)
     prob_t3_ensemble = round((prob_t3_ec * 0.6) + (prob_t3_gfs * 0.4), 1)
     prob_t8_ensemble = round((prob_t8_ec * 0.6) + (prob_t8_gfs * 0.4), 1)
@@ -102,7 +98,7 @@ for idx, t_str in enumerate(times):
 df_res = pd.DataFrame(results)
 df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 
-# 繪製 Plotly 對比圖
+# 繪製圖表
 print("⚡ 正在繪製多模式集成對比圖...")
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["ECMWF 8號機率 (%)"], name="ECMWF 模式 (八號風球)", line=dict(color='orange', width=1.5, dash='dash')))
@@ -153,7 +149,7 @@ html_content = f"""
         </div>
         
         <div class="intro-box">
-            💡 <b>運作原理：</b> 本系統採用「多模式權重集成」演算法。結合 <b>ECMWF IFS</b> 與 <b>NOAA GFS</b> 兩大黃金系集模式，以 <b>6:4 權重</b>進行集成，提供相較單一模式更穩定、虛報率低、時效長達 10 天的早期預警。本版本已引入<b>「24小時氣壓驟降率」</b>與<b>「嚴格氣壓滑動窗口」</b>，完美排除夏日高溫海陸風等日常氣象噪聲干擾。
+            💡 <b>運作原理：</b> 本系統採用「多模式權重集成」演算法。結合 <b>ECMWF IFS</b> 與 <b>NOAA GFS</b> 兩大黃金系集模式，以 <b>6:4 權重</b>進行集成，提供相較單一模式更穩定、虛報率低、時效長達 10 天的早期預警。本版本已修正氣壓單位，完美排除噪聲。
         </div>
 
         <div>{chart_html}</div>
@@ -169,4 +165,4 @@ html_content = f"""
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-print("🎉 恭喜！多模式集成 index.html 已成功生成，網頁體積輕量且高度優化！")
+print("🎉 恭喜！多模式集成單位修復版 index.html 已成功生成！")
