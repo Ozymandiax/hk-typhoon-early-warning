@@ -2,8 +2,8 @@ name: Update Typhoon Forecast Webpage
 
 on:
   schedule:
-    - cron: '0 */12 * * *'  # 每天每 12 小時（國際時間 00:00 和 12:00）自動運行一次
-  workflow_dispatch:      # 允許你在 GitHub 網頁上手動點擊按鈕立即執行
+    - cron: '0 */12 * * *'  # 每天每 12 小時自動更新
+  workflow_dispatch:      # 允許手動點擊按鈕立即執行
 
 jobs:
   build-and-deploy:
@@ -16,18 +16,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-style: '3.9'
+        python-version: '3.9'
 
-    - name: Install System Dependencies
+    - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libeccodes-dev
+        pip install pandas numpy plotly requests
 
-    - name: Install Python Dependencies
-      run: |
-        pip install ecmwf-opendata xarray cfgrib pandas numpy geopy plotly
-
-    - name: Run Analysis Script
+    - name: Run Multi-Model Integration Script
       run: python build_report.py
 
     - name: Deploy index.html to Hugging Face Spaces
@@ -37,17 +32,11 @@ jobs:
         git config --global user.email "bot@github.com"
         git config --global user.name "GitHub Action Bot"
         
-        # 【修正關鍵】：在 clone 的網址中，直接使用 Token 作為密碼驗證
-        # 注意：請把下面的 【你的HF用戶名】和【你的Space名稱】替換成你真實的名稱（保留 / 符號，刪除括號）
-        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning hf_space
+        # 替換為你的真實 HF 帳戶名和 Space 名
+        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/【你的HF用戶名】/【你的Space名稱】 hf_space
         
-        # 複製新生成的 index.html 到剛剛 clone 下來的資料夾中
         cp index.html hf_space/index.html
-        
         cd hf_space
         git add index.html
-        # 如果檔案沒有變化，git commit 會報錯，這裡用 || exit 0 安全退出
-        git commit -m "Update typhoon forecast: $(date)" || exit 0
-        
-        # 推送回 Hugging Face
+        git commit -m "Update multi-model typhoon forecast: $(date)" || exit 0
         git push origin main
