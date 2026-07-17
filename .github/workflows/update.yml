@@ -33,7 +33,7 @@ jobs:
         git config --global user.name "GitHub Action Bot"
         
         # 替換為你的真實 HF 帳戶名和 Space 名
-        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/【你的HF用戶名】/【你的Space名稱】 hf_space
+        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning hf_space
         
         cp index.html hf_space/index.html
         cd hf_space
