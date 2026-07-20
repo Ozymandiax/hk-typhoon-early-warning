@@ -1,8 +1,8 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
 import plotly.graph_objects as go
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from sklearn.tree import DecisionTreeClassifier
 
 HK_LAT = 22.3
@@ -35,8 +35,8 @@ url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={HK_LAT}&
 url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={HK_LAT}&longitude={HK_LON}&hourly=wind_speed_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
 
 try:
-    res_ec = requests.get(url_ecmwf).json()
-    res_gfs = requests.get(url_gfs).json()
+    res_ec = requests.get(url_ecmwf, timeout=15).json()
+    res_gfs = requests.get(url_gfs, timeout=15).json()
 except Exception as e:
     print(f"❌ API 請求失敗: {e}")
     exit(1)
@@ -58,7 +58,8 @@ results = []
 BASE_PRESSURE = 1010.0
 
 for idx, t_str in enumerate(times):
-    dt = datetime.strptime(t_str, "%Y-%m-%dT%H:%M")
+    # 解析 UTC 時間並加上 8 小時轉換為香港時間 (HKT)
+    dt = datetime.strptime(t_str, "%Y-%m-%dT%H:%M") + timedelta(hours=8)
     display_time = dt.strftime("%m月%d日 %H:00")
     
     ec_winds = ec_winds_matrix[idx]
@@ -71,7 +72,7 @@ for idx, t_str in enumerate(times):
     gfs_press_drop = gfs_press_matrix[prev_idx] - gfs_press
     
     # ------------------------------------------
-    # 軌道 1：傳統物理門檻判定邏輯 (保留原汁原味)
+    # 軌道 1：傳統物理門檻判定邏輯
     # ------------------------------------------
     ec_t1_phy = (ec_press <= 1004) & ((BASE_PRESSURE - ec_press >= 6) | (ec_press_drop >= 2.5))
     ec_t8_phy = (ec_press <= 997) & (ec_winds * 1.2 >= 63)
@@ -82,11 +83,10 @@ for idx, t_str in enumerate(times):
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
 
     # ------------------------------------------
-    # 軌道 2：🤖 AI 決策樹判定邏輯 (多變數綜合預測)
+    # 軌道 2：🤖 AI 決策樹判定邏輯
     # ------------------------------------------
     ec_ai_preds = []
     for m in range(len(ec_press)):
-        # 餵入當前成員的特徵: [氣壓, 降幅, 風速(含修正)]
         feat = [[ec_press[m], ec_press_drop[m], ec_winds[m] * 1.1]]
         ec_ai_preds.append(ai_model.predict(feat)[0])
         
@@ -98,13 +98,11 @@ for idx, t_str in enumerate(times):
     ec_ai_preds = np.array(ec_ai_preds)
     gfs_ai_preds = np.array(gfs_ai_preds)
     
-    # 計算 AI 預測各級風球的成員比例
     prob_t1_ec_ai = np.sum(ec_ai_preds >= 1) / len(ec_ai_preds) * 100
     prob_t8_ec_ai = np.sum(ec_ai_preds == 8) / len(ec_ai_preds) * 100
     prob_t1_gfs_ai = np.sum(gfs_ai_preds >= 1) / len(gfs_ai_preds) * 100
     prob_t8_gfs_ai = np.sum(gfs_ai_preds == 8) / len(gfs_ai_preds) * 100
     
-    # 雙模式 AI 權重集成
     prob_t1_ai = round((prob_t1_ec_ai * 0.6) + (prob_t1_gfs_ai * 0.4), 1)
     prob_t8_ai = round((prob_t8_ec_ai * 0.6) + (prob_t8_gfs_ai * 0.4), 1)
 
@@ -118,6 +116,10 @@ for idx, t_str in enumerate(times):
 
 df_res = pd.DataFrame(results)
 df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
+
+# 計算標準香港時間 (UTC+8) 作為網頁最後更新時間
+hkt_now = datetime.now(timezone.utc) + timedelta(hours=8)
+update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 
 # ==========================================
 # 📊 繪製雙軌對比圖表
@@ -159,7 +161,7 @@ html_content = f"""
         .header {{ text-align: center; padding: 20px 0; border-bottom: 1px solid #333; }}
         h1 {{ margin: 0; color: #ff5252; font-size: 24px; }}
         .update-time {{ color: #888; font-size: 13px; margin-top: 8px; }}
-        .intro-box {{ background: #222; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 14px; line-height: 1.6; border-left: 4px solid #gold; }}
+        .intro-box {{ background: #222; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 14px; line-height: 1.6; border-left: 4px solid #ffd700; }}
         .table-container {{ margin-top: 25px; overflow-x: auto; background: #1e1e1e; padding: 15px; border-radius: 8px; }}
         table {{ width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; }}
         th, td {{ padding: 10px; border-bottom: 1px solid #333; }}
@@ -171,7 +173,7 @@ html_content = f"""
     <div class="container">
         <div class="header">
             <h1>🌀 香港潛在風暴雙軌早期預警系統 (物理 + AI 決策樹)</h1>
-            <div class="update-time">最後自動更新（香港時間 HKT）: {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
+            <div class="update-time">最後自動更新（香港時間 HKT）: {update_time_str}</div>
         </div>
         
         <div class="intro-box">
@@ -193,4 +195,5 @@ html_content = f"""
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-print("🎉 恭喜！雙軌 AI 決策樹版 index.html 已成功生成！")
+
+print("🎉 恭喜！全 HKT 時區對齊版 index.html 已成功生成！")
