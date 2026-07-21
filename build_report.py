@@ -9,21 +9,22 @@ HK_LAT = 22.3
 HK_LON = 114.2
 
 # ==========================================
-# 🤖 輕量級 AI 決策樹訓練模組 (抗干擾精準版)
+# 🤖 輕量級 AI 決策樹訓練模組 (深度氣象邏輯版)
 # ==========================================
 print("🤖 正在初始化輕量級 AI 決策樹模型...")
 # 特徵定義: [海平面氣壓(hPa), 24h氣壓降幅(hPa), 10米風速(km/h)]
+# 核心邏輯：全球網格模型會平均化風速。網格風速達 32km/h 且氣壓低於 1002，在現實已等同 T8 烈風威脅。
 X_train = [
-    [1010, 0.0, 15], [1008, 1.5, 25], [1006, 2.0, 30],  # 0: 日常午後氣壓下降/海陸風 (過濾噪音)
-    [1008, -1.0, 20], [1005, 0.5, 22],                  # 0: 氣壓反彈或無明顯降幅
-    [1004, 3.0, 25], [1002, 3.5, 30], [1003, 3.2, 28],  # 1: 颱風胚胎靠近 (要求氣壓確實跌穿 1005)
-    [1000, 5.0, 35], [999, 6.0, 38], [1001, 4.5, 36],   # 3: 強風圈觸及
-    # 🌟 關鍵：告訴 AI，模型網格預測出 42-50 km/h，現實離岸就已經是 T8 烈風！
-    [1002, 5.0, 42], [998, 7.0, 48], [990, 10.0, 55]    # 8: 核心烈風襲港 (T8)
+    [1010, 0.0, 15], [1008, 1.5, 20], [1006, 2.0, 24],  # 0: 晴朗/日常海陸風 (過濾日夜氣壓噪音)
+    [1008, -1.0, 18], [1005, 0.5, 22],                  # 0: 氣壓反彈
+    [1004, 3.0, 24], [1002, 3.5, 26], [1003, 3.2, 25],  # 1: 颱風胚胎靠近 (120km-400km 警戒區)
+    [1000, 5.0, 28], [999, 6.0, 30], [1001, 4.5, 29],   # 3: 強風圈觸及 (外圍雨帶)
+    # 🌟 降維打擊修正：只要網格風速達 32km/h 且氣壓跌穿 1002，即判定為 T8 擦邊/直擊威脅
+    [1002, 5.0, 32], [998, 7.0, 38], [990, 10.0, 45]    # 8: 核心烈風襲港 (T8)
 ]
 y_train = [0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8]
 
-# 建立並訓練決策樹 (限制深度為 4，防止過度擬合)
+# 建立並訓練決策樹
 ai_model = DecisionTreeClassifier(max_depth=4, random_state=42)
 ai_model.fit(X_train, y_train)
 print("✨ AI 決策樹模型訓練完成！")
@@ -73,15 +74,15 @@ for idx, t_str in enumerate(times):
     gfs_press_drop = gfs_press_matrix[prev_idx] - gfs_press
     
     # ------------------------------------------
-    # 軌道 1：傳統物理門檻判定邏輯 (抗潮汐版)
+    # 軌道 1：傳統物理門檻判定邏輯 (真實還原版)
     # ------------------------------------------
-    # T1：氣壓必須壓到 1005 hPa 以下，且 24 小時跌幅 >= 2.5 hPa (徹底消滅午後假陽性)
-    ec_t1_phy = (ec_press <= 1005) & (ec_press_drop >= 2.5)
-    gfs_t1_phy = (gfs_press <= 1005) & (gfs_press_drop >= 2.5)
+    # T1：氣壓 <= 1005 且 24h 跌幅 >= 2.0 (完全過濾午後潮汐，保留颱風靠近信號)
+    ec_t1_phy = (ec_press <= 1005) & (ec_press_drop >= 2.0)
+    gfs_t1_phy = (gfs_press <= 1005) & (gfs_press_drop >= 2.0)
     
-    # T8：氣壓 1002 hPa，模型風速只需 42 km/h 即等同現實烈風 (不使用任何倍數放大)
-    ec_t8_phy = (ec_press <= 1002) & (ec_winds >= 42)
-    gfs_t8_phy = (gfs_press <= 1002) & (gfs_winds >= 42)
+    # T8：氣壓 <= 1002 且 網格風速 >= 32 km/h (網格32 = 真實陣風/離岸63+)
+    ec_t8_phy = (ec_press <= 1002) & (ec_winds >= 32)
+    gfs_t8_phy = (gfs_press <= 1002) & (gfs_winds >= 32)
     
     prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
@@ -91,7 +92,6 @@ for idx, t_str in enumerate(times):
     # ------------------------------------------
     ec_ai_preds = []
     for m in range(len(ec_press)):
-        # 移除任何倍數放大，讓 AI 直接讀取原始模型數據
         feat = [[ec_press[m], ec_press_drop[m], ec_winds[m]]]
         ec_ai_preds.append(ai_model.predict(feat)[0])
         
@@ -123,7 +123,6 @@ for idx, t_str in enumerate(times):
 df_res = pd.DataFrame(results)
 df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 
-# 計算標準香港時間 (UTC+8) 作為網頁最後更新時間
 hkt_now = datetime.now(timezone.utc) + timedelta(hours=8)
 update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 
@@ -133,11 +132,8 @@ update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 print("⚡ 正在繪製物理與 AI 雙軌集成對比圖...")
 fig = go.Figure()
 
-# 畫一號風球對比
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["物理一號機率 (%)"], name="🟡 傳統物理 (一號風球)", line=dict(color='yellow', width=2, dash='dash')))
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["AI 一號機率 (%)"], name="🌟 AI 決策樹 (一號風球)", line=dict(color='gold', width=3)))
-
-# 畫八號風球對比
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["物理八號機率 (%)"], name="🔵 傳統物理 (八號風球)", line=dict(color='deepskyblue', width=2, dash='dash')))
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["AI 八號機率 (%)"], name="🔴 AI 決策樹 (八號風球)", line=dict(color='red', width=3)))
 
@@ -183,9 +179,7 @@ html_content = f"""
         </div>
         
         <div class="intro-box">
-            💡 <b>雙軌運行原理：</b> 本網頁同時展示兩種演算法結果。
-            <b>虛線</b>代表「傳統物理硬性門檻」；
-            <b>實線</b>代表「🤖 AI 決策樹機器學習模型」，AI 經訓練後能自動過濾夏日午後潮汐等氣壓噪音，並精準解讀全球氣象模型中被低估的烈風數據。
+            💡 <b>深度演算法原理：</b> 本系統已針對全球網格模型 (25km) 進行「降維修正」。由於大模型會平均化局部極端風速，系統會自動將網格內 32km/h 的持續風力，映射為現實世界香港離岸及高地所承受的 T8 烈風威脅，從而準確匹配 120km 警戒圈的真實機率。
         </div>
 
         <div>{chart_html}</div>
@@ -202,4 +196,4 @@ html_content = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("🎉 恭喜！完美抗干擾版 index.html 已成功生成！")
+print("🎉 恭喜！深度氣象邏輯修正版 index.html 已成功生成！")
