@@ -9,19 +9,19 @@ HK_LAT = 22.3
 HK_LON = 114.2
 
 # ==========================================
-# 🤖 輕量級 AI 決策樹訓練模組 (Live Training)
+# 🤖 輕量級 AI 決策樹訓練模組 (抗干擾精準版)
 # ==========================================
 print("🤖 正在初始化輕量級 AI 決策樹模型...")
 # 特徵定義: [海平面氣壓(hPa), 24h氣壓降幅(hPa), 10米風速(km/h)]
-# 標籤定義: 0=無信號, 1=一號風球, 3=三號風球, 8=八號風球
 X_train = [
-    [1012, 0.0, 15], [1010, 0.5, 22], [1008, 1.0, 25],  # 0: 晴朗/日常海陸風
-    [1006, 1.5, 30], [1004, 2.0, 35], [1005, 1.8, 32],  # 1: 颱風胚胎靠近 (T1)
-    [1002, 3.0, 45], [1000, 4.0, 50], [1004, 2.5, 42],  # 3: 強風圈觸及 (T3)
-    # 🌟 關鍵修正：加入 1003-1005 hPa 也能觸發 T8 的學習樣本
-    [1003, 3.5, 65], [998, 6.0, 75], [990, 10.0, 90]    # 8: 核心烈風襲港 (T8)
+    [1010, 0.0, 15], [1008, 1.5, 25], [1006, 2.0, 30],  # 0: 日常午後氣壓下降/海陸風 (過濾噪音)
+    [1008, -1.0, 20], [1005, 0.5, 22],                  # 0: 氣壓反彈或無明顯降幅
+    [1004, 3.0, 25], [1002, 3.5, 30], [1003, 3.2, 28],  # 1: 颱風胚胎靠近 (要求氣壓確實跌穿 1005)
+    [1000, 5.0, 35], [999, 6.0, 38], [1001, 4.5, 36],   # 3: 強風圈觸及
+    # 🌟 關鍵：告訴 AI，模型網格預測出 42-50 km/h，現實離岸就已經是 T8 烈風！
+    [1002, 5.0, 42], [998, 7.0, 48], [990, 10.0, 55]    # 8: 核心烈風襲港 (T8)
 ]
-y_train = [0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8]
+y_train = [0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8]
 
 # 建立並訓練決策樹 (限制深度為 4，防止過度擬合)
 ai_model = DecisionTreeClassifier(max_depth=4, random_state=42)
@@ -73,15 +73,15 @@ for idx, t_str in enumerate(times):
     gfs_press_drop = gfs_press_matrix[prev_idx] - gfs_press
     
     # ------------------------------------------
-    # 軌道 1：傳統物理門檻判定邏輯
+    # 軌道 1：傳統物理門檻判定邏輯 (抗潮汐版)
     # ------------------------------------------
-    # T1：只要氣壓低於 1008 且有下降趨勢即可
-    ec_t1_phy = (ec_press <= 1008) & ((BASE_PRESSURE - ec_press >= 4) | (ec_press_drop >= 1.5))
-    gfs_t1_phy = (gfs_press <= 1008) & ((BASE_PRESSURE - gfs_press >= 4) | (gfs_press_drop >= 1.5))
+    # T1：氣壓必須壓到 1005 hPa 以下，且 24 小時跌幅 >= 2.5 hPa (徹底消滅午後假陽性)
+    ec_t1_phy = (ec_press <= 1005) & (ec_press_drop >= 2.5)
+    gfs_t1_phy = (gfs_press <= 1005) & (gfs_press_drop >= 2.5)
     
-    # T8：氣壓放寬至 1006 hPa (應付遠距離大環流颱風)，嚴格把關 63km/h 烈風門檻
-    ec_t8_phy = (ec_press <= 1006) & (ec_winds * 1.45 >= 63)
-    gfs_t8_phy = (gfs_press <= 1006) & (gfs_winds * 1.45 >= 63)
+    # T8：氣壓 1002 hPa，模型風速只需 42 km/h 即等同現實烈風 (不使用任何倍數放大)
+    ec_t8_phy = (ec_press <= 1002) & (ec_winds >= 42)
+    gfs_t8_phy = (gfs_press <= 1002) & (gfs_winds >= 42)
     
     prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
@@ -91,13 +91,13 @@ for idx, t_str in enumerate(times):
     # ------------------------------------------
     ec_ai_preds = []
     for m in range(len(ec_press)):
-        # 關鍵修正：餵給 AI 的風速同步乘上 1.45
-        feat = [[ec_press[m], ec_press_drop[m], ec_winds[m] * 1.45]]
+        # 移除任何倍數放大，讓 AI 直接讀取原始模型數據
+        feat = [[ec_press[m], ec_press_drop[m], ec_winds[m]]]
         ec_ai_preds.append(ai_model.predict(feat)[0])
         
     gfs_ai_preds = []
     for m in range(len(gfs_press)):
-        feat = [[gfs_press[m], gfs_press_drop[m], gfs_winds[m] * 1.45]]
+        feat = [[gfs_press[m], gfs_press_drop[m], gfs_winds[m]]]
         gfs_ai_preds.append(ai_model.predict(feat)[0])
         
     ec_ai_preds = np.array(ec_ai_preds)
@@ -108,6 +108,7 @@ for idx, t_str in enumerate(times):
     prob_t1_gfs_ai = np.sum(gfs_ai_preds >= 1) / len(gfs_ai_preds) * 100
     prob_t8_gfs_ai = np.sum(gfs_ai_preds == 8) / len(gfs_ai_preds) * 100
     
+    # 雙模式 AI 權重集成
     prob_t1_ai = round((prob_t1_ec_ai * 0.6) + (prob_t1_gfs_ai * 0.4), 1)
     prob_t8_ai = round((prob_t8_ec_ai * 0.6) + (prob_t8_gfs_ai * 0.4), 1)
 
@@ -183,8 +184,8 @@ html_content = f"""
         
         <div class="intro-box">
             💡 <b>雙軌運行原理：</b> 本網頁同時展示兩種演算法結果。
-            <b>虛線</b>代表「傳統物理硬性門檻」（1004hPa / 997hPa）；
-            <b>實線</b>代表「🤖 AI 決策樹機器學習模型」，AI 會綜合評估氣壓值、氣壓驟降斜率與風速的三維交叉關係，減少單一硬性指標嘅死板誤報。
+            <b>虛線</b>代表「傳統物理硬性門檻」；
+            <b>實線</b>代表「🤖 AI 決策樹機器學習模型」，AI 經訓練後能自動過濾夏日午後潮汐等氣壓噪音，並精準解讀全球氣象模型中被低估的烈風數據。
         </div>
 
         <div>{chart_html}</div>
@@ -201,4 +202,4 @@ html_content = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("🎉 恭喜！全 HKT 時區對齊版 index.html 已成功生成！")
+print("🎉 恭喜！完美抗干擾版 index.html 已成功生成！")
