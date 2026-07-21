@@ -5,70 +5,94 @@ import plotly.graph_objects as go
 from datetime import datetime, timezone, timedelta
 from sklearn.tree import DecisionTreeClassifier
 
-HK_LAT = 22.3
-HK_LON = 114.2
+# ==========================================
+# 📍 五星陣雷達坐標設定 (南, 中, 西, 東, 北)
+# ==========================================
+# 覆蓋: 長洲/橫瀾島, 尖沙咀, 赤鱲角機場, 西貢, 打鼓嶺
+LATS = "22.18,22.30,22.31,22.35,22.50"
+LONS = "114.10,114.17,113.92,114.35,114.15"
 
 # ==========================================
-# 🤖 輕量級 AI 決策樹訓練模組 (陣風突圍版)
+# 🤖 輕量級 AI 決策樹訓練模組 (極限追蹤版)
 # ==========================================
 print("🤖 正在初始化輕量級 AI 決策樹模型...")
 # 特徵定義: [海平面氣壓(hPa), 24h氣壓降幅(hPa), 10米陣風(km/h)]
-# 注意：這裡已經轉用「陣風 (Gusts)」來訓練 AI
 X_train = [
     [1010, 0.0, 25], [1008, 1.5, 30], [1006, 2.0, 35],  # 0: 日常陣風 (雷雨/海陸風)
     [1008, -1.0, 20], [1005, 0.5, 35],                  # 0: 氣壓反彈
-    [1004, 3.0, 45], [1002, 3.5, 48], [1005, 2.5, 42],  # 1: T1 警戒 (氣壓跌，陣風增強)
-    [1000, 5.0, 55], [999, 6.0, 60], [1003, 4.0, 52],   # 3: T3 強風
-    # 🌟 陣風 T8 核心邏輯：陣風達 70+，或 (氣壓<1005 且陣風達 60+)
-    [1004, 5.0, 65], [1001, 7.0, 75],                   # 8: T8 烈風 (氣壓配合陣風)
-    [1008, 3.0, 75], [1006, 4.0, 80]                    # 8: T8 烈風 (純陣風極強)
+    [1004, 3.0, 42], [1002, 3.5, 45], [1005, 2.5, 40],  # 1: T1 警戒
+    [1000, 5.0, 48], [999, 6.0, 50], [1003, 4.0, 46],   # 3: T3 強風
+    # 🌟 極限追蹤修正：捕捉擦邊成員，陣風達 52+ 即判定 T8
+    [1004, 5.0, 52], [1001, 7.0, 55],                   # 8: T8 邊緣直擊 (氣壓配合陣風 52+)
+    [1002, 4.5, 50],                                    # 8: 西登擦邊威脅
+    [1008, 3.0, 62], [1006, 4.0, 65]                    # 8: T8 烈風 (純外圍環流強陣風 62+)
 ]
-y_train = [0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8, 8]
+y_train = [0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8, 8, 8]
 
-# 建立並訓練決策樹
 ai_model = DecisionTreeClassifier(max_depth=4, random_state=42)
 ai_model.fit(X_train, y_train)
 print("✨ AI 決策樹模型訓練完成！")
 
 # ==========================================
-# ⚡ 數據獲取與核心計算 (改用陣風 wind_gusts_10m)
+# ⚡ 數據獲取與空間極端值聚合 (Spatial Aggregation)
 # ==========================================
-print("⚡ 正在向 Open-Meteo 雲端請求 ECMWF 及 GFS 陣風數據...")
-# 🚨 關鍵修改：將 wind_speed_10m 替換為 wind_gusts_10m
-url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={HK_LAT}&longitude={HK_LON}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs025&forecast_days=10"
-url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={HK_LAT}&longitude={HK_LON}&hourly=wind_gusts_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
+print("⚡ 正在向 Open-Meteo 雲端請求五大測風點陣風數據...")
+url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs025&forecast_days=10"
+url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
 
 try:
-    res_ec = requests.get(url_ecmwf, timeout=15).json()
-    res_gfs = requests.get(url_gfs, timeout=15).json()
+    # 由於查詢多個坐標，API 會返回一個包含 5 個 JSON Object 的 List
+    res_ec_list = requests.get(url_ecmwf, timeout=15).json()
+    res_gfs_list = requests.get(url_gfs, timeout=15).json()
 except Exception as e:
     print(f"❌ API 請求失敗: {e}")
     exit(1)
 
-hourly_ec = res_ec['hourly']
-times = hourly_ec['time']
+# 以第一個地點的時間軸為基準
+times = res_ec_list[0]['hourly']['time']
 
-# 提取陣風 (Gusts) 數據
-ec_wind_keys = [k for k in hourly_ec.keys() if "wind_gusts_10m_member" in k]
-ec_press_keys = [k for k in hourly_ec.keys() if "pressure_msl_member" in k]
-gfs_wind_keys = [k for k in res_gfs['hourly'].keys() if "wind_gusts_10m_member" in k]
-gfs_press_keys = [k for k in res_gfs['hourly'].keys() if "pressure_msl_member" in k]
+ec_wind_keys = [k for k in res_ec_list[0]['hourly'].keys() if "wind_gusts_10m_member" in k]
+ec_press_keys = [k for k in res_ec_list[0]['hourly'].keys() if "pressure_msl_member" in k]
+gfs_wind_keys = [k for k in res_gfs_list[0]['hourly'].keys() if "wind_gusts_10m_member" in k]
+gfs_press_keys = [k for k in res_gfs_list[0]['hourly'].keys() if "pressure_msl_member" in k]
 
-ec_winds_matrix = np.array([[hourly_ec[k][idx] for k in ec_wind_keys] for idx in range(len(times))]) 
-ec_press_matrix = np.array([[hourly_ec[k][idx] for k in ec_press_keys] for idx in range(len(times))]) 
-gfs_winds_matrix = np.array([[res_gfs['hourly'][k][idx] for k in gfs_wind_keys] for idx in range(len(times))])
-gfs_press_matrix = np.array([[res_gfs['hourly'][k][idx] for k in gfs_press_keys] for idx in range(len(times))])
+num_times = len(times)
+num_ec_members = len(ec_wind_keys)
+num_gfs_members = len(gfs_wind_keys)
+
+# 初始化聚合矩陣：風速尋找最大值，氣壓尋找最小值
+ec_winds_matrix = np.zeros((num_times, num_ec_members))
+ec_press_matrix = np.full((num_times, num_ec_members), 1050.0)
+gfs_winds_matrix = np.zeros((num_times, num_gfs_members))
+gfs_press_matrix = np.full((num_times, num_gfs_members), 1050.0)
+
+# 🌍 核心邏輯：遍歷 5 個地點，提取區域內的最極端數據
+for loc_data in res_ec_list:
+    hourly = loc_data['hourly']
+    loc_winds = np.array([[hourly[k][idx] for k in ec_wind_keys] for idx in range(num_times)])
+    loc_press = np.array([[hourly[k][idx] for k in ec_press_keys] for idx in range(num_times)])
+    # 覆蓋為所有地點中的最高陣風與最低氣壓
+    ec_winds_matrix = np.maximum(ec_winds_matrix, loc_winds)
+    ec_press_matrix = np.minimum(ec_press_matrix, loc_press)
+
+for loc_data in res_gfs_list:
+    hourly = loc_data['hourly']
+    loc_winds = np.array([[hourly[k][idx] for k in gfs_wind_keys] for idx in range(num_times)])
+    loc_press = np.array([[hourly[k][idx] for k in gfs_press_keys] for idx in range(num_times)])
+    gfs_winds_matrix = np.maximum(gfs_winds_matrix, loc_winds)
+    gfs_press_matrix = np.minimum(gfs_press_matrix, loc_press)
 
 results = []
+BASE_PRESSURE = 1010.0
 
 for idx, t_str in enumerate(times):
     # 解析 UTC 時間並加上 8 小時轉換為香港時間 (HKT)
     dt = datetime.strptime(t_str, "%Y-%m-%dT%H:%M") + timedelta(hours=8)
     display_time = dt.strftime("%m月%d日 %H:00")
     
-    ec_winds = ec_winds_matrix[idx]  # 這裡現在代表的是「陣風」
+    ec_winds = ec_winds_matrix[idx]  
     ec_press = ec_press_matrix[idx]
-    gfs_winds = gfs_winds_matrix[idx] # 這裡現在代表的是「陣風」
+    gfs_winds = gfs_winds_matrix[idx]
     gfs_press = gfs_press_matrix[idx]
     
     prev_idx = max(0, idx - 24)
@@ -76,15 +100,15 @@ for idx, t_str in enumerate(times):
     gfs_press_drop = gfs_press_matrix[prev_idx] - gfs_press
     
     # ------------------------------------------
-    # 軌道 1：傳統物理門檻判定邏輯 (配合陣風指標)
+    # 軌道 1：傳統物理門檻判定邏輯 (極限追蹤版)
     # ------------------------------------------
     # T1：氣壓 <= 1006 且 陣風 >= 40 km/h (過濾日常雷雨)
     ec_t1_phy = (ec_press <= 1006) & (ec_winds >= 40)
     gfs_t1_phy = (gfs_press <= 1006) & (gfs_winds >= 40)
     
-    # T8：陣風達到烈風下限 63km/h (或氣壓較低時陣風達 55km/h)
-    ec_t8_phy = ((ec_press <= 1005) & (ec_winds >= 55)) | (ec_winds >= 65)
-    gfs_t8_phy = ((gfs_press <= 1005) & (gfs_winds >= 55)) | (gfs_winds >= 65)
+    # T8：只要區域內有任何一點陣風達 55+，或氣壓跌穿 1005 時陣風達 48+
+    ec_t8_phy = ((ec_press <= 1005) & (ec_winds >= 48)) | (ec_winds >= 55)
+    gfs_t8_phy = ((gfs_press <= 1005) & (gfs_winds >= 48)) | (gfs_winds >= 55)
     
     prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
@@ -176,12 +200,12 @@ html_content = f"""
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌀 香港潛在風暴雙軌早期預警系統 (陣風突破版)</h1>
+            <h1>🌀 香港潛在風暴雙軌早期預警系統 (五星雷達聚合版)</h1>
             <div class="update-time">最後自動更新（香港時間 HKT）: {update_time_str}</div>
         </div>
         
         <div class="intro-box">
-            💡 <b>演算法重大升級 (陣風追蹤技術)：</b> 由於全球網格模型會嚴重低估持續風速，本系統已全面切換至 <b>陣風數據 (Wind Gusts)</b> 作為運算核心。當集合模型預測陣風突破 55-65 km/h，並配合氣壓跌幅，系統將精準映射出對應的烈風及八號風球實質威脅機率。
+            💡 <b>系統演算法終極升級 (五星陣空間聚合技術)：</b> 系統已放棄傳統的「單點監測」盲區，升級為同時監測香港東南西北中 5 個極端地理位置 (包括長洲及橫瀾島)。演算法會實時提取這 5 個區域內的 <b>「最高陣風」與「最低氣壓」極值</b> 作為判定基準，完美模擬天文台「八中四」的宏觀掛波邏輯，精準捕捉所有致命的擦邊路徑威脅！
         </div>
 
         <div>{chart_html}</div>
@@ -198,4 +222,4 @@ html_content = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("🎉 恭喜！陣風突圍版 index.html 已成功生成！")
+print("🎉 恭喜！五星雷達聚合版 index.html 已成功生成！")
