@@ -274,7 +274,7 @@ html_content = f"""
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌀 香港潛在風暴雙軌早期預警系統 (終極四維版)</h1>
+            <h1>🌀 香港潛在風暴雙軌早期預警系統</h1>
             <div class="update-time">最後自動更新（香港時間 HKT）: {update_time_str}</div>
         </div>
         
