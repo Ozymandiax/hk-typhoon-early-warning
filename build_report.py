@@ -8,7 +8,6 @@ from sklearn.tree import DecisionTreeClassifier
 # ==========================================
 # 📍 五星陣雷達坐標設定 (南, 中, 西, 東, 北)
 # ==========================================
-# 覆蓋: 長洲/橫瀾島, 尖沙咀(核心中樞), 赤鱲角機場, 西貢, 打鼓嶺
 LATS = "22.18,22.30,22.31,22.35,22.50"
 LONS = "114.10,114.17,113.92,114.35,114.15"
 
@@ -16,16 +15,14 @@ LONS = "114.10,114.17,113.92,114.35,114.15"
 # 🤖 輕量級 AI 決策樹訓練模組 (四維特徵終極版)
 # ==========================================
 print("🤖 正在初始化輕量級 AI 決策樹模型...")
-# 特徵定義: [海平面氣壓(hPa), 24h跌幅(hPa), 3h急跌(hPa), 地形修正陣風(km/h)]
 X_train = [
     [1010, 0.0,  0.0, 25], [1008, 1.5,  0.5, 30], [1006, 2.0,  0.8, 35],  # 0: 日常陣風
     [1008, -1.0,-0.5, 20], [1005, 0.5,  0.2, 35],                       # 0: 氣壓反彈
     [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],  # 1: T1 警戒
     [1000, 5.0,  2.0, 48], [999,  6.0,  2.5, 50], [1003, 4.0,  1.8, 46],  # 3: T3 強風
-    # 🌟 核心突破：加入 3h 急跌特徵，精準捕捉眼牆逼近
     [1004, 5.0,  2.2, 52], [1001, 7.0,  3.0, 55],                       # 8: T8 邊緣直擊 (氣壓急降+陣風 52+)
     [1002, 4.5,  2.5, 50],                                              # 8: 西登擦邊威脅
-    [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]                        # 8: T8 烈風 (純外圍環流強陣風)
+    [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]                        # 8: T8 烈風 (純外圍強陣風)
 ]
 y_train = [0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8, 8, 8]
 
@@ -34,58 +31,68 @@ ai_model.fit(X_train, y_train)
 print("✨ 終極四維 AI 決策樹訓練完成！")
 
 # ==========================================
-# ⚡ 數據獲取與空間極端值聚合 (加入風向)
+# ⚡ 數據獲取 (將風向請求獨立分離)
 # ==========================================
-print("⚡ 正在向 Open-Meteo 請求五星陣風、氣壓及核心風向數據...")
-# 🚨 API 新增: wind_direction_10m
-url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,wind_direction_10m,pressure_msl&models=ecmwf_ifs025&forecast_days=10"
-url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,wind_direction_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
+print("⚡ 正在向 Open-Meteo 請求數據...")
+url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs025&forecast_days=10"
+url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
+# 獨立請求確定性主模型風向 (尖沙咀單點基準)
+url_dir = "https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs025&forecast_days=10"
 
 try:
-    res_ec_list = requests.get(url_ecmwf, timeout=15).json()
-    res_gfs_list = requests.get(url_gfs, timeout=15).json()
+    res_ec = requests.get(url_ecmwf, timeout=15).json()
+    if isinstance(res_ec, dict) and res_ec.get('error'):
+        print(f"❌ ECMWF API 拒絕請求: {res_ec.get('reason')}")
+        exit(1)
+    res_ec_list = res_ec if isinstance(res_ec, list) else [res_ec]
+    
+    res_gfs = requests.get(url_gfs, timeout=15).json()
+    if isinstance(res_gfs, dict) and res_gfs.get('error'):
+        print(f"❌ GFS API 拒絕請求: {res_gfs.get('reason')}")
+        exit(1)
+    res_gfs_list = res_gfs if isinstance(res_gfs, list) else [res_gfs]
+
+    res_dir = requests.get(url_dir, timeout=15).json()
+    if isinstance(res_dir, dict) and res_dir.get('error'):
+        print(f"❌ 風向 API 拒絕請求: {res_dir.get('reason')}")
+        exit(1)
+        
 except Exception as e:
-    print(f"❌ API 請求失敗: {e}")
+    print(f"❌ API 請求徹底失敗: {e}")
     exit(1)
 
 times = res_ec_list[0]['hourly']['time']
+# 建立風向對照字典 (時間 -> 風向角度)
+dir_dict = dict(zip(res_dir['hourly']['time'], res_dir['hourly']['wind_direction_10m']))
 
 ec_wind_keys = [k for k in res_ec_list[0]['hourly'].keys() if "wind_gusts_10m_member" in k]
-ec_dir_keys  = [k for k in res_ec_list[0]['hourly'].keys() if "wind_direction_10m_member" in k]
 ec_press_keys= [k for k in res_ec_list[0]['hourly'].keys() if "pressure_msl_member" in k]
-
 gfs_wind_keys = [k for k in res_gfs_list[0]['hourly'].keys() if "wind_gusts_10m_member" in k]
-gfs_dir_keys  = [k for k in res_gfs_list[0]['hourly'].keys() if "wind_direction_10m_member" in k]
 gfs_press_keys= [k for k in res_gfs_list[0]['hourly'].keys() if "pressure_msl_member" in k]
 
 num_times = len(times)
 num_ec_members = len(ec_wind_keys)
 num_gfs_members = len(gfs_wind_keys)
 
-# 初始化空間聚合矩陣
 ec_winds_max = np.zeros((num_times, num_ec_members))
 ec_press_min = np.full((num_times, num_ec_members), 1050.0)
 gfs_winds_max = np.zeros((num_times, num_gfs_members))
 gfs_press_min = np.full((num_times, num_gfs_members), 1050.0)
 
-# 🌍 五大區域極端值聚合 (Max Gust, Min Pressure)
+# 🌍 聚合五大區域極端值 (防禦 Null 值報錯)
 for loc_data in res_ec_list:
     hourly = loc_data['hourly']
-    loc_winds = np.array([[hourly[k][idx] for k in ec_wind_keys] for idx in range(num_times)])
-    loc_press = np.array([[hourly[k][idx] for k in ec_press_keys] for idx in range(num_times)])
+    loc_winds = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 0 for k in ec_wind_keys] for idx in range(num_times)])
+    loc_press = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 1050.0 for k in ec_press_keys] for idx in range(num_times)])
     ec_winds_max = np.maximum(ec_winds_max, loc_winds)
     ec_press_min = np.minimum(ec_press_min, loc_press)
 
 for loc_data in res_gfs_list:
     hourly = loc_data['hourly']
-    loc_winds = np.array([[hourly[k][idx] for k in gfs_wind_keys] for idx in range(num_times)])
-    loc_press = np.array([[hourly[k][idx] for k in gfs_press_keys] for idx in range(num_times)])
+    loc_winds = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 0 for k in gfs_wind_keys] for idx in range(num_times)])
+    loc_press = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 1050.0 for k in gfs_press_keys] for idx in range(num_times)])
     gfs_winds_max = np.maximum(gfs_winds_max, loc_winds)
     gfs_press_min = np.minimum(gfs_press_min, loc_press)
-
-# 🧭 抽取核心中樞 (尖沙咀 Index 1) 的風向，作為地形判定基準
-ec_dir_center = np.array([[res_ec_list[1]['hourly'][k][idx] for k in ec_dir_keys] for idx in range(num_times)])
-gfs_dir_center = np.array([[res_gfs_list[1]['hourly'][k][idx] for k in gfs_dir_keys] for idx in range(num_times)])
 
 results = []
 
@@ -95,13 +102,14 @@ for idx, t_str in enumerate(times):
     
     ec_winds = ec_winds_max[idx]
     ec_press = ec_press_min[idx]
-    ec_dir   = ec_dir_center[idx]
-    
     gfs_winds = gfs_winds_max[idx]
     gfs_press = gfs_press_min[idx]
-    gfs_dir   = gfs_dir_center[idx]
     
-    # 計算 24 小時與 3 小時氣壓跌幅
+    # 從字典獲取當下確定性風向 (預設 90 度東風)
+    center_dir = dir_dict.get(t_str, 90)
+    if center_dir is None: 
+        center_dir = 90
+        
     idx_24h = max(0, idx - 24)
     idx_3h  = max(0, idx - 3)
     
@@ -110,26 +118,22 @@ for idx, t_str in enumerate(times):
     gfs_press_drop_24h = gfs_press_min[idx_24h] - gfs_press
     gfs_press_drop_3h  = gfs_press_min[idx_3h] - gfs_press
     
-    # 🏔️ 地形風向懲罰乘數 (Wind Masking)
-    # 北/西北偏北 (被大帽山/內陸阻擋): 陣風打 8 折
-    # 東至南 (海面完全無遮擋): 陣風乘 1.05
-    ec_mult = np.ones_like(ec_winds)
-    ec_mult[(ec_dir >= 315) | (ec_dir <= 45)] = 0.8
-    ec_mult[(ec_dir >= 90) & (ec_dir <= 180)] = 1.05
-    ec_winds_adj = ec_winds * ec_mult
-    
-    gfs_mult = np.ones_like(gfs_winds)
-    gfs_mult[(gfs_dir >= 315) | (gfs_dir <= 45)] = 0.8
-    gfs_mult[(gfs_dir >= 90) & (gfs_dir <= 180)] = 1.05
-    gfs_winds_adj = gfs_winds * gfs_mult
+    # 🏔️ 地形風向懲罰 (Wind Masking)
+    multiplier = 1.0
+    if (center_dir >= 315) or (center_dir <= 45):
+        multiplier = 0.8
+    elif (center_dir >= 90) and (center_dir <= 180):
+        multiplier = 1.05
+        
+    ec_winds_adj = ec_winds * multiplier
+    gfs_winds_adj = gfs_winds * multiplier
 
     # ------------------------------------------
-    # 軌道 1：傳統物理門檻判定 (基於地形修正後陣風)
+    # 軌道 1：傳統物理門檻判定
     # ------------------------------------------
     ec_t1_phy = (ec_press <= 1006) & (ec_winds_adj >= 38)
     gfs_t1_phy = (gfs_press <= 1006) & (gfs_winds_adj >= 38)
     
-    # 引入 3h 跌幅作為 T8 觸發條件之一 (捕捉急速惡化)
     ec_t8_phy = ((ec_press <= 1005) & (ec_winds_adj >= 48)) | (ec_winds_adj >= 55) | ((ec_press_drop_3h >= 2.0) & (ec_winds_adj >= 45))
     gfs_t8_phy = ((gfs_press <= 1005) & (gfs_winds_adj >= 48)) | (gfs_winds_adj >= 55) | ((gfs_press_drop_3h >= 2.0) & (gfs_winds_adj >= 45))
     
@@ -161,8 +165,8 @@ for idx, t_str in enumerate(times):
     prob_t8_ai = round((prob_t8_ec_ai * 0.6) + (prob_t8_gfs_ai * 0.4), 1)
 
     # 計算預測分歧度 (Confidence Spread)
-    ec_spread = np.std(ec_winds_adj)
-    gfs_spread = np.std(gfs_winds_adj)
+    ec_spread = np.std(ec_winds_adj) if len(ec_winds_adj) > 0 else 0
+    gfs_spread = np.std(gfs_winds_adj) if len(gfs_winds_adj) > 0 else 0
     model_spread = round((ec_spread * 0.6) + (gfs_spread * 0.4), 1)
 
     results.append({
@@ -186,7 +190,6 @@ update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 print("⚡ 正在繪製終極四維集成對比圖...")
 fig = go.Figure()
 
-# Hover Template 增加分歧度顯示
 hover_temp = "%{y}%<br>模型分歧度: %{customdata} km/h"
 
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["物理一號機率 (%)"], name="🟡 傳統物理 (一號風球)", line=dict(color='yellow', width=2, dash='dash'), customdata=df_res_filtered["陣風分歧度 (Uncertainty)"], hovertemplate=hover_temp))
@@ -236,7 +239,7 @@ html_content = f"""
         </div>
         
         <div class="intro-box">
-            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾 (Wind Direction Masking)」及「3小時氣壓急降特徵 ($\Delta P_{3h}$)」。系統不僅能自動捕捉擦邊強風，更懂得根據香港地形智能判斷「有波無風」的假像。將滑鼠懸停於圖表上，更可查看底層集合模型的「陣風分歧度 (Uncertainty)」。
+            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾 (Wind Direction Masking)」及「3小時氣壓急降特徵」。系統不僅能自動捕捉擦邊強風，更懂得根據香港地形智能判斷「有波無風」的假像。將滑鼠懸停於圖表上，更可查看底層集合模型的「陣風分歧度」。
         </div>
 
         <div>{chart_html}</div>
