@@ -15,10 +15,11 @@ print("🤖 正在初始化輕量級 AI 決策樹模型...")
 # 特徵定義: [海平面氣壓(hPa), 24h氣壓降幅(hPa), 10米風速(km/h)]
 # 標籤定義: 0=無信號, 1=一號風球, 3=三號風球, 8=八號風球
 X_train = [
-    [1012, 0.0, 15], [1010, 0.5, 22], [1008, 1.0, 28],  # 0: 晴朗/日常
-    [1004, 2.5, 25], [1002, 3.0, 32], [1003, 2.8, 20],  # 1: 颱風靠近 (T1)
-    [1000, 5.0, 42], [999,  6.0, 48], [1001, 4.5, 38],  # 3: 強風圈觸及 (T3)
-    [997,  7.0, 50], [988, 14.0, 85], [994,  9.0, 55]   # 8: 烈風襲港 (T8) - 下調了風速與氣壓門檻，適應模型平滑效應
+    [1012, 0.0, 15], [1010, 0.5, 22], [1008, 1.0, 28],  # 0: 晴朗/日常海陸風
+    [1004, 2.5, 25], [1002, 3.0, 32], [1003, 2.8, 20],  # 1: 颱風胚胎靠近
+    [1000, 5.0, 35], [999,  6.0, 42], [1001, 4.5, 38],  # 3: 強風圈觸及
+    # 關鍵修正：告訴 AI，只要氣壓跌到 1000 且網格風速達 45，在現實離岸就已經是 T8 級別！
+    [1000, 7.0, 45], [988, 14.0, 85], [996,  9.0, 52]   # 8: 核心烈風襲港
 ]
 y_train = [0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8]
 
@@ -74,10 +75,10 @@ for idx, t_str in enumerate(times):
     # ------------------------------------------
     # 軌道 1：傳統物理門檻判定邏輯
     # ------------------------------------------
-    ec_t1_phy = (ec_press <= 1004) & ((BASE_PRESSURE - ec_press >= 6) | (ec_press_drop >= 2.5))
-    ec_t8_phy = (ec_press <= 998) & (ec_winds >= 45)
-    gfs_t1_phy = (gfs_press <= 1004) & ((BASE_PRESSURE - gfs_press >= 6) | (gfs_press_drop >= 2.5))
-    gfs_t8_phy = (gfs_press <= 998) & (gfs_winds >= 45)
+    ec_t1_phy = (ec_press <= 1004) & ((BASE_PRESSURE - ec_press >= 5) | (ec_press_drop >= 2.0))
+    ec_t8_phy = (ec_press <= 1000) & (ec_winds * 1.45 >= 63)
+    gfs_t1_phy = (gfs_press <= 1004) & ((BASE_PRESSURE - gfs_press >= 5) | (gfs_press_drop >= 2.0))
+    gfs_t8_phy = (gfs_press <= 1000) & (gfs_winds * 1.45 >= 63)
     
     prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
@@ -87,12 +88,13 @@ for idx, t_str in enumerate(times):
     # ------------------------------------------
     ec_ai_preds = []
     for m in range(len(ec_press)):
-        feat = [[ec_press[m], ec_press_drop[m], ec_winds[m] * 1.1]]
+        # 關鍵修正：餵給 AI 的風速同步乘上 1.45
+        feat = [[ec_press[m], ec_press_drop[m], ec_winds[m] * 1.45]]
         ec_ai_preds.append(ai_model.predict(feat)[0])
         
     gfs_ai_preds = []
     for m in range(len(gfs_press)):
-        feat = [[gfs_press[m], gfs_press_drop[m], gfs_winds[m] * 1.1]]
+        feat = [[gfs_press[m], gfs_press_drop[m], gfs_winds[m] * 1.45]]
         gfs_ai_preds.append(ai_model.predict(feat)[0])
         
     ec_ai_preds = np.array(ec_ai_preds)
