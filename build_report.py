@@ -20,7 +20,7 @@ X_train = [
     [1008, -1.0,-0.5, 20], [1005, 0.5,  0.2, 35],                       # 0: 氣壓反彈
     [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],  # 1: T1 警戒
     [1000, 5.0,  2.0, 48], [999,  6.0,  2.5, 50], [1003, 4.0,  1.8, 46],  # 3: T3 強風
-    [1004, 5.0,  2.2, 52], [1001, 7.0,  3.0, 55],                       # 8: T8 邊緣直擊 (氣壓急降+陣風 52+)
+    [1004, 5.0,  2.2, 52], [1001, 7.0,  3.0, 55],                       # 8: T8 邊緣直擊
     [1002, 4.5,  2.5, 50],                                              # 8: 西登擦邊威脅
     [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]                        # 8: T8 烈風 (純外圍強陣風)
 ]
@@ -31,12 +31,11 @@ ai_model.fit(X_train, y_train)
 print("✨ 終極四維 AI 決策樹訓練完成！")
 
 # ==========================================
-# ⚡ 數據獲取 (將風向請求獨立分離)
+# ⚡ 數據獲取
 # ==========================================
 print("⚡ 正在向 Open-Meteo 請求數據...")
 url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs025&forecast_days=10"
 url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
-# 獨立請求確定性主模型風向 (尖沙咀單點基準)
 url_dir = "https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs025&forecast_days=10"
 
 try:
@@ -62,7 +61,6 @@ except Exception as e:
     exit(1)
 
 times = res_ec_list[0]['hourly']['time']
-# 建立風向對照字典 (時間 -> 風向角度)
 dir_dict = dict(zip(res_dir['hourly']['time'], res_dir['hourly']['wind_direction_10m']))
 
 ec_wind_keys = [k for k in res_ec_list[0]['hourly'].keys() if "wind_gusts_10m_member" in k]
@@ -79,7 +77,6 @@ ec_press_min = np.full((num_times, num_ec_members), 1050.0)
 gfs_winds_max = np.zeros((num_times, num_gfs_members))
 gfs_press_min = np.full((num_times, num_gfs_members), 1050.0)
 
-# 🌍 聚合五大區域極端值 (防禦 Null 值報錯)
 for loc_data in res_ec_list:
     hourly = loc_data['hourly']
     loc_winds = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 0 for k in ec_wind_keys] for idx in range(num_times)])
@@ -105,7 +102,6 @@ for idx, t_str in enumerate(times):
     gfs_winds = gfs_winds_max[idx]
     gfs_press = gfs_press_min[idx]
     
-    # 從字典獲取當下確定性風向 (預設 90 度東風)
     center_dir = dir_dict.get(t_str, 90)
     if center_dir is None: 
         center_dir = 90
@@ -118,7 +114,6 @@ for idx, t_str in enumerate(times):
     gfs_press_drop_24h = gfs_press_min[idx_24h] - gfs_press
     gfs_press_drop_3h  = gfs_press_min[idx_3h] - gfs_press
     
-    # 🏔️ 地形風向懲罰 (Wind Masking)
     multiplier = 1.0
     if (center_dir >= 315) or (center_dir <= 45):
         multiplier = 0.8
@@ -128,9 +123,7 @@ for idx, t_str in enumerate(times):
     ec_winds_adj = ec_winds * multiplier
     gfs_winds_adj = gfs_winds * multiplier
 
-    # ------------------------------------------
-    # 軌道 1：傳統物理門檻判定
-    # ------------------------------------------
+    # 物理判斷
     ec_t1_phy = (ec_press <= 1006) & (ec_winds_adj >= 38)
     gfs_t1_phy = (gfs_press <= 1006) & (gfs_winds_adj >= 38)
     
@@ -140,9 +133,7 @@ for idx, t_str in enumerate(times):
     prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
 
-    # ------------------------------------------
-    # 軌道 2：🤖 四維 AI 決策樹判定
-    # ------------------------------------------
+    # AI 判斷
     ec_ai_preds = []
     for m in range(len(ec_press)):
         feat = [[ec_press[m], ec_press_drop_24h[m], ec_press_drop_3h[m], ec_winds_adj[m]]]
@@ -164,7 +155,6 @@ for idx, t_str in enumerate(times):
     prob_t1_ai = round((prob_t1_ec_ai * 0.6) + (prob_t1_gfs_ai * 0.4), 1)
     prob_t8_ai = round((prob_t8_ec_ai * 0.6) + (prob_t8_gfs_ai * 0.4), 1)
 
-    # 計算預測分歧度 (Confidence Spread)
     ec_spread = np.std(ec_winds_adj) if len(ec_winds_adj) > 0 else 0
     gfs_spread = np.std(gfs_winds_adj) if len(gfs_winds_adj) > 0 else 0
     model_spread = round((ec_spread * 0.6) + (gfs_spread * 0.4), 1)
@@ -181,6 +171,41 @@ for idx, t_str in enumerate(times):
 df_res = pd.DataFrame(results)
 df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 
+# ==========================================
+# 🧠 AI 自動生成綜合結論
+# ==========================================
+max_t8_idx = df_res_filtered["AI 八號機率 (%)"].idxmax()
+max_t8_row = df_res_filtered.iloc[max_t8_idx]
+
+peak_time = max_t8_row["時間"]
+peak_prob = max_t8_row["AI 八號機率 (%)"]
+peak_spread = max_t8_row["陣風分歧度 (Uncertainty)"]
+
+if peak_prob >= 20.0:
+    conclusion_html = f"""
+    <div style="background: linear-gradient(135deg, #4b1313, #8b0000); padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ff3333; color: #fff;">
+        🚨 <b>AI 實時威脅判定：</b><br>
+        根據最新四維運算，預計<b>最有可能懸掛八號風球的時間為【{peak_time}】</b>，
+        最高機率達到 <b>{peak_prob}%</b> 
+        <span style="color:#ffaaaa;">(陣風分歧度：{peak_spread} km/h)</span>。<br>
+        <i>*系統提示：若分歧度逐步收窄至 10 km/h 以下，即代表各大超級電腦達成共識，風暴將造成嚴重威脅！</i>
+    </div>
+    """
+elif peak_prob > 0:
+    conclusion_html = f"""
+    <div style="background: #2b2b00; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ffd700; color: #fff;">
+        ⚠️ <b>AI 實時威脅判定：</b><br>
+        系統目前偵測到八號風球信號，預計高峰期為<b>【{peak_time}】</b>，機率為 <b>{peak_prob}%</b> <span style="color:#aaaaaa;">(分歧度：{peak_spread} km/h)</span>。目前威脅屬於中低度或處於分歧狀態，請密切留意。
+    </div>
+    """
+else:
+    conclusion_html = f"""
+    <div style="background: #1a2a1a; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #33ff33; color: #fff;">
+        ✅ <b>AI 實時威脅判定：</b><br>
+        根據當前數據，未來 10 天內<b>暫未偵測到實質的八號風球威脅</b>。
+    </div>
+    """
+
 hkt_now = datetime.now(timezone.utc) + timedelta(hours=8)
 update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 
@@ -189,7 +214,6 @@ update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 # ==========================================
 print("⚡ 正在繪製終極四維集成對比圖...")
 fig = go.Figure()
-
 hover_temp = "%{y}%<br>模型分歧度: %{customdata} km/h"
 
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["物理一號機率 (%)"], name="🟡 傳統物理 (一號風球)", line=dict(color='yellow', width=2, dash='dash'), customdata=df_res_filtered["陣風分歧度 (Uncertainty)"], hovertemplate=hover_temp))
@@ -238,8 +262,10 @@ html_content = f"""
             <div class="update-time">最後自動更新（香港時間 HKT）: {update_time_str}</div>
         </div>
         
+        {conclusion_html}
+        
         <div class="intro-box">
-            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾 (Wind Direction Masking)」及「3小時氣壓急降特徵」。系統不僅能自動捕捉擦邊強風，更懂得根據香港地形智能判斷「有波無風」的假像。將滑鼠懸停於圖表上，更可查看底層集合模型的「陣風分歧度」。
+            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾」及「3小時氣壓急降特徵」。系統不僅能自動捕捉擦邊強風，更懂得根據香港地形智能判斷「有波無風」的假像。
         </div>
 
         <div>{chart_html}</div>
@@ -256,4 +282,4 @@ html_content = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("🎉 恭喜！終極四維地形修正版 index.html 已成功生成！")
+print("🎉 恭喜！智能摘要版 index.html 已成功生成！")
