@@ -172,7 +172,7 @@ df_res = pd.DataFrame(results)
 df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 
 # ==========================================
-# 🧠 AI 自動生成綜合結論
+# 🧠 AI 自動生成綜合結論 (包含 8 ➡️ 3 落波預測)
 # ==========================================
 max_t8_idx = df_res_filtered["AI 八號機率 (%)"].idxmax()
 max_t8_row = df_res_filtered.iloc[max_t8_idx]
@@ -181,21 +181,37 @@ peak_time = max_t8_row["時間"]
 peak_prob = max_t8_row["AI 八號機率 (%)"]
 peak_spread = max_t8_row["陣風分歧度 (Uncertainty)"]
 
+downgrade_text = ""
+if peak_prob >= 20.0:
+    # 尋找落波時間: 在高峰期之後，首次跌穿 20% 安全線的時間點
+    after_peak_df = df_res_filtered.iloc[max_t8_idx + 1:]
+    downgrade_candidates = after_peak_df[after_peak_df["AI 八號機率 (%)"] < 20.0]
+    
+    if not downgrade_candidates.empty:
+        down_row = downgrade_candidates.iloc[0]
+        down_time = down_row["時間"]
+        down_prob = down_row["AI 八號機率 (%)"]
+        down_spread = down_row["陣風分歧度 (Uncertainty)"]
+        downgrade_text = f"<br><br>📉 <b>( 8 ➡️ 3) 最有落波時間為香港時間【{down_time}】，機率為 {down_prob}%</b> <span style='color:#ffaaaa;'>(陣風分歧度：{down_spread} km/h)</span>。"
+    else:
+        downgrade_text = "<br><br>📉 <b>( 8 ➡️ 3) 落波評估：</b>風暴影響時間較長，預測期結束前暫未見明確落波信號。"
+
 if peak_prob >= 20.0:
     conclusion_html = f"""
     <div style="background: linear-gradient(135deg, #4b1313, #8b0000); padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ff3333; color: #fff;">
         🚨 <b>AI 實時威脅判定：</b><br>
         根據最新四維運算，預計<b>最有可能懸掛八號風球的時間為【{peak_time}】</b>，
         最高機率達到 <b>{peak_prob}%</b> 
-        <span style="color:#ffaaaa;">(陣風分歧度：{peak_spread} km/h)</span>。<br>
-        <i>*系統提示：若分歧度逐步收窄至 10 km/h 以下，即代表各大超級電腦達成共識，風暴將造成嚴重威脅！</i>
+        <span style="color:#ffaaaa;">(陣風分歧度：{peak_spread} km/h)</span>。
+        {downgrade_text}
+        <br><br><i>*系統提示：若分歧度逐步收窄至 10 km/h 以下，即代表各大超級電腦達成共識，風暴將造成嚴重威脅！</i>
     </div>
     """
 elif peak_prob > 0:
     conclusion_html = f"""
     <div style="background: #2b2b00; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ffd700; color: #fff;">
         ⚠️ <b>AI 實時威脅判定：</b><br>
-        系統目前偵測到八號風球信號，預計高峰期為<b>【{peak_time}】</b>，機率為 <b>{peak_prob}%</b> <span style="color:#aaaaaa;">(分歧度：{peak_spread} km/h)</span>。目前威脅屬於中低度或處於分歧狀態，請密切留意。
+        系統目前偵測到八號風球信號，預計高峰期為<b>【{peak_time}】</b>，機率為 <b>{peak_prob}%</b> <span style="color:#aaaaaa;">(陣風分歧度：{peak_spread} km/h)</span>。目前威脅屬於中低度或處於分歧狀態，請密切留意。
     </div>
     """
 else:
@@ -265,7 +281,7 @@ html_content = f"""
         {conclusion_html}
         
         <div class="intro-box">
-            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾」及「3小時氣壓急降特徵」。系統不僅能自動捕捉擦邊強風，更懂得根據香港地形智能判斷「有波無風」的假像。
+            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾」及「3小時氣壓急降特徵」。系統不僅能自動捕捉擦邊強風，更懂得根據香港地形智能判斷「有波無風」的假象，並能根據數據回落趨勢推算落波時間。
         </div>
 
         <div>{chart_html}</div>
@@ -282,4 +298,4 @@ html_content = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("🎉 恭喜！智能摘要版 index.html 已成功生成！")
+print("🎉 恭喜！包含 8 ➡️ 3 落波預測嘅智能摘要版 index.html 已成功生成！")
