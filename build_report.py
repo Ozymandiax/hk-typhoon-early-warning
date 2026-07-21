@@ -12,19 +12,20 @@ LATS = "22.18,22.30,22.31,22.35,22.50"
 LONS = "114.10,114.17,113.92,114.35,114.15"
 
 # ==========================================
-# 🤖 輕量級 AI 決策樹訓練模組 (四維特徵終極版)
+# 🤖 輕量級 AI 決策樹訓練模組 (無噪淨化版)
 # ==========================================
 print("🤖 正在初始化輕量級 AI 決策樹模型...")
 X_train = [
     [1010, 0.0,  0.0, 25], [1008, 1.5,  0.5, 30], [1006, 2.0,  0.8, 35],  # 0: 日常陣風
     [1008, -1.0,-0.5, 20], [1005, 0.5,  0.2, 35],                       # 0: 氣壓反彈
-    [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],  # 1: T1 警戒
+    [1006, 1.0,  1.5, 42],                                              # 🌟 0: 新增降噪樣本 (夏季雷雨/熱低壓：陣風大但氣壓無持續跌)
+    [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],  # 1: T1 警戒 (必須伴隨穩定氣壓跌幅)
     [1000, 5.0,  2.0, 48], [999,  6.0,  2.5, 50], [1003, 4.0,  1.8, 46],  # 3: T3 強風
     [1004, 5.0,  2.2, 52], [1001, 7.0,  3.0, 55],                       # 8: T8 邊緣直擊
     [1002, 4.5,  2.5, 50],                                              # 8: 西登擦邊威脅
     [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]                        # 8: T8 烈風 (純外圍強陣風)
 ]
-y_train = [0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8, 8, 8]
+y_train = [0, 0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8, 8, 8]
 
 ai_model = DecisionTreeClassifier(max_depth=5, random_state=42)
 ai_model.fit(X_train, y_train)
@@ -123,9 +124,12 @@ for idx, t_str in enumerate(times):
     ec_winds_adj = ec_winds * multiplier
     gfs_winds_adj = gfs_winds * multiplier
 
-    # 物理判斷
-    ec_t1_phy = (ec_press <= 1006) & (ec_winds_adj >= 38)
-    gfs_t1_phy = (gfs_press <= 1006) & (gfs_winds_adj >= 38)
+    # ------------------------------------------
+    # 軌道 1：傳統物理門檻判定 (加入降噪防護)
+    # ------------------------------------------
+    # 🌟 新增降噪機制：T1 必須伴隨 24h 氣壓跌幅 >= 1.5 hPa，徹底過濾夏季雷雨
+    ec_t1_phy = (ec_press <= 1005) & (ec_winds_adj >= 38) & (ec_press_drop_24h >= 1.5)
+    gfs_t1_phy = (gfs_press <= 1005) & (gfs_winds_adj >= 38) & (gfs_press_drop_24h >= 1.5)
     
     ec_t8_phy = ((ec_press <= 1005) & (ec_winds_adj >= 48)) | (ec_winds_adj >= 55) | ((ec_press_drop_3h >= 2.0) & (ec_winds_adj >= 45))
     gfs_t8_phy = ((gfs_press <= 1005) & (gfs_winds_adj >= 48)) | (gfs_winds_adj >= 55) | ((gfs_press_drop_3h >= 2.0) & (gfs_winds_adj >= 45))
@@ -133,7 +137,9 @@ for idx, t_str in enumerate(times):
     prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
 
-    # AI 判斷
+    # ------------------------------------------
+    # 軌道 2：🤖 四維 AI 決策樹判定
+    # ------------------------------------------
     ec_ai_preds = []
     for m in range(len(ec_press)):
         feat = [[ec_press[m], ec_press_drop_24h[m], ec_press_drop_3h[m], ec_winds_adj[m]]]
@@ -172,7 +178,7 @@ df_res = pd.DataFrame(results)
 df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 
 # ==========================================
-# 🧠 AI 自動生成綜合結論 (包含 8 ➡️ 3 落波預測)
+# 🧠 AI 自動生成綜合結論
 # ==========================================
 max_t8_idx = df_res_filtered["AI 八號機率 (%)"].idxmax()
 max_t8_row = df_res_filtered.iloc[max_t8_idx]
@@ -183,7 +189,6 @@ peak_spread = max_t8_row["陣風分歧度 (Uncertainty)"]
 
 downgrade_text = ""
 if peak_prob >= 20.0:
-    # 尋找落波時間: 在高峰期之後，首次跌穿 20% 安全線的時間點
     after_peak_df = df_res_filtered.iloc[max_t8_idx + 1:]
     downgrade_candidates = after_peak_df[after_peak_df["AI 八號機率 (%)"] < 20.0]
     
@@ -281,7 +286,7 @@ html_content = f"""
         {conclusion_html}
         
         <div class="intro-box">
-            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾」及「3小時氣壓急降特徵」。系統不僅能自動捕捉擦邊強風，更懂得根據香港地形智能判斷「有波無風」的假象，並能根據數據回落趨勢推算落波時間。
+            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾」、「3小時氣壓急降特徵」，並新增了<b>「24小時氣壓持續下沉」過濾機制</b>。系統不僅能自動捕捉擦邊強風，更徹底消除了夏季局部雷雨及熱低壓帶來的假陽性噪音 (Noise)。
         </div>
 
         <div>{chart_html}</div>
@@ -298,4 +303,4 @@ html_content = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("🎉 恭喜！包含 8 ➡️ 3 落波預測嘅智能摘要版 index.html 已成功生成！")
+print("🎉 恭喜！無噪淨化版 index.html 已成功生成！")
