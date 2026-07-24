@@ -1,43 +1,125 @@
-name: Build and Sync to Hugging Face Space
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香港潛在風暴雙軌預警 Dashboard & AI 作戰地圖</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+        }
+        .badge-danger {
+            background-color: #ef4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        #map {
+            width: 100%;
+            height: 520px;
+            border-radius: 10px;
+            background: #0f172a;
+        }
+        .map-legend {
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #334155;
+        }
+        .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
+        .legend-color { width: 14px; height: 4px; margin-right: 8px; border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌀 香港潛在風暴雙軌早期預警系統 (Hugging Face Space)</h2>
+        
+        <div class="card">
+            <h3>📊 懸掛八號風球機率預測 (AI 決策樹 + 物理雙軌)</h3>
+            <p>⏱️ 最高機率懸掛時間：<b>【07月26日 08:00】</b></p>
+            <p>🚨 最高機率：<span class="badge-danger">85.5%</span> (陣風分歧度：<b>40.8 km/h</b>)</p>
+            <p style="color: #94a3b8; font-size: 0.85em;">
+                * 系統提示：高分歧度代表超級電腦對「擦邊 8 號」與「穿心強颱」上限仍有角力。
+            </p>
+        </div>
 
-on:
-  schedule:
-    - cron: '0 */6 * * *'  # 每 6 小時自動觸發
-  workflow_dispatch:       # 支援手動觸發
-  push:
-    branches:
-      - main
+        <div class="card">
+            <h3>🗺️ AI 模式實時路徑 & 警戒圈作戰地圖</h3>
+            <div id="map"></div>
+        </div>
+    </div>
 
-jobs:
-  build-and-sync:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([21.2, 115.0], 7);
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 12, minZoom: 5,
+            attribution: '&copy; OpenStreetMap & CartoDB'
+        }).addTo(map);
 
-      - name: Run Build Script
-        run: |
-          python build_report.py
+        const hkCoords = [22.3193, 114.1694];
+        const rings = [
+            { r: 200000, c: '#eab308', label: '200km 外圍烈風圈' },
+            { r: 100000, c: '#f97316', label: '100km 暴風核心圈' },
+            { r: 50000,  c: '#ef4444', label: '50km 穿心直擊圈' }
+        ];
 
-      - name: Commit to GitHub Repo
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html data/ai_paths.geojson
-          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update dashboard report and AI map" && git push)
+        rings.forEach(ring => {
+            L.circle(hkCoords, {
+                color: ring.c, fillColor: ring.c, fillOpacity: 0.08, weight: 1.5, dashArray: '4, 6'
+            }).bindTooltip(ring.label).addTo(map);
+        });
 
-      - name: Push Direct to Hugging Face Spaces 🔥
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          # ⚠️ 請替換為你嘅 Hugging Face 用戶名 同 Space 名稱
-          HF_USERNAME: Ozymand1az
-          HF_SPACE_NAME: hk-typhoon-early-warning
-        run: |
-          git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning
+        L.circleMarker(hkCoords, { radius: 6, color: '#3b82f6', fillColor: '#60a5fa', fillOpacity: 1 }).addTo(map)
+         .bindPopup('<b>香港 (Hong Kong)</b><br>預警系統定位點');
+
+        const geojsonData = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"model": "ECMWF AIFS (AI 大模型)", "color": "#a855f7"}, "geometry": {"type": "LineString", "coordinates": [[124.5, 16.0], [120.0, 18.0], [116.2, 20.2], [113.8, 21.9]]}}, {"type": "Feature", "properties": {"model": "Google GraphCast (AI)", "color": "#06b6d4"}, "geometry": {"type": "LineString", "coordinates": [[124.5, 16.0], [119.8, 17.8], [115.3, 19.8], [112.9, 21.4]]}}, {"type": "Feature", "properties": {"model": "GFS 物理集合平均", "color": "#ef4444"}, "geometry": {"type": "LineString", "coordinates": [[124.5, 16.0], [119.2, 17.5], [114.5, 19.5], [111.8, 20.8]]}}]};
+
+        L.geoJSON(geojsonData, {
+            style: function(feature) {
+                return { color: feature.properties.color, weight: 3.5, opacity: 0.85 };
+            },
+            onEachFeature: function(feature, layer) {
+                layer.bindPopup('<b>預測模式：' + feature.properties.model + '</b>');
+            }
+        }).addTo(map);
+
+        const legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function () {
+            const div = L.DomUtil.create('div', 'map-legend');
+            div.innerHTML = `
+                <div style="font-weight:bold; margin-bottom:6px;">🤖 AI / 物理模式路徑</div>
+                <div class="legend-item"><div class="legend-color" style="background:#a855f7;"></div>ECMWF AIFS</div>
+                <div class="legend-item"><div class="legend-color" style="background:#06b6d4;"></div>Google GraphCast</div>
+                <div class="legend-item"><div class="legend-color" style="background:#ef4444;"></div>GFS 物理模式</div>
+            `;
+            return div;
+        };
+        legend.addTo(map);
+    </script>
+</body>
+</html>
