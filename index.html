@@ -1,60 +1,438 @@
+
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港潛在風暴雙軌預警 Dashboard & AI 作戰地圖</title>
+    <title>香港潛在風暴雙軌早期預警系統</title>
+    <!-- 引入 Leaflet 地圖 CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .card { background-color: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; }
-        .badge-danger { background-color: #ef4444; color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; }
-        #map { width: 100%; height: 520px; border-radius: 10px; background: #0f172a; }
-        .map-legend { background: rgba(15, 23, 42, 0.85); color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 12px; border: 1px solid #334155; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #121212; color: #e0e0e0; margin: 0; padding: 15px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .header { text-align: center; padding: 20px 0; border-bottom: 1px solid #333; }
+        h1 { margin: 0; color: #ff5252; font-size: 24px; }
+        .update-time { color: #888; font-size: 13px; margin-top: 8px; }
+        .intro-box { background: #222; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 14px; line-height: 1.6; border-left: 4px solid #ff3333; }
+        .table-container { margin-top: 25px; overflow-x: auto; background: #1e1e1e; padding: 15px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; }
+        th, td { padding: 10px; border-bottom: 1px solid #333; }
+        th { background-color: #2b2b2b; color: #fff; }
+        tr:hover { background-color: #252525; }
+        
+        /* 🗺️ 地圖專用 CSS */
+        #typhoon-map { width: 100%; height: 500px; border-radius: 8px; background: #1a1a1a; margin-top: 25px; border: 1px solid #333; }
+        .map-legend { background: rgba(30, 30, 30, 0.85); color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 12px; border: 1px solid #444; }
         .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
         .legend-color { width: 14px; height: 4px; margin-right: 8px; border-radius: 2px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🌀 香港潛在風暴雙軌早期預警系統</h2>
+        <div class="header">
+            <h1>🌀 香港潛在風暴雙軌早期預警系統 (終極完整版)</h1>
+            <div class="update-time">最後自動更新（香港時間 HKT）: 2026-07-24 16:10</div>
+        </div>
         
-        <div class="card">
-            <h3>📊 懸掛八號風球機率預測 (AI 決策樹 + 物理雙軌)</h3>
-            <p>⏱️ 最高機率懸掛時間：<b>【07月26日 08:00】</b></p>
-            <p>🚨 最高機率：<span class="badge-danger">85.5%</span> (陣風分歧度：<b>40.8 km/h</b>)</p>
-            <p style="color: #94a3b8; font-size: 0.85em;">
-                * 系統提示：分歧度代表超級電腦對「擦邊 8 號」與「穿心強颱」上限之角力。
-            </p>
+        
+    <div style="background: linear-gradient(135deg, #4b1313, #8b0000); padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ff3333; color: #fff;">
+        🚨 <b>AI 實時威脅判定：</b><br>
+        根據最新四維運算，預計<b>最有可能懸掛八號風球的時間為【07月26日 08:00】</b>，
+        最高機率達到 <b>85.5%</b> 
+        <span style="color:#ffaaaa;">(陣風分歧度：40.8 km/h)</span>。
+        <br><br>📉 <b>( 8 ➡️ 3) 最有落波時間為香港時間【07月27日 02:00】，機率為 13.2%</b> <span style='color:#ffaaaa;'>(陣風分歧度：22.8 km/h)</span>。
+        <br><br><i>*系統提示：若分歧度逐步收窄至 10 km/h 以下，即代表各大超級電腦達成共識，風暴將造成嚴重威脅！</i>
+    </div>
+    
+        
+        <div class="intro-box">
+            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾」、「3小時氣壓急降特徵」，並新增了<b>「24小時氣壓持續下沉」過濾機制</b>。系統不僅能自動捕捉擦邊強風，更徹底消除了夏季局部雷雨及熱低壓帶來的假陽性噪音。
         </div>
 
-        <div class="card">
-            <h3>🗺️ AI 模式實時路徑 & 警戒圈作戰地圖</h3>
-            <div id="map"></div>
+        <!-- 📊 數據圖表 -->
+        <div><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="05f68c9d-9644-4f91-9d79-1a3787132b2d" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("05f68c9d-9644-4f91-9d79-1a3787132b2d")) {                    Plotly.newPlot(                        "05f68c9d-9644-4f91-9d79-1a3787132b2d",                        [{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUBmZmZmZmYCQM3MzMzMzARAzczMzMzMFEDNzMzMzMwQQJqZmZmZmSBAZmZmZmZmLEAzMzMzM3NAQGZmZmZmZkRAmpmZmZnZQEBmZmZmZuY\u002fQM3MzMzMzDZAAAAAAAAALkAAAAAAAAAlQJqZmZmZmR9AAAAAAAAAL0BmZmZmZmYtQM3MzMzMTDNAmpmZmZkZMEAAAAAAAAArQGZmZmZmZipAMzMzMzMzK0AzMzMzMzMsQDMzMzMzMy1AMzMzMzMzKkCamZmZmZksQAAAAAAAAC9AAAAAAACAMECamZmZmZkvQJqZmZmZmStAAAAAAAAALEAzMzMzMzMoQGZmZmZmZidAzczMzMzMJkAAAAAAAAAqQAAAAAAAACtAzczMzMzMJ0DNzMzMzMwnQJqZmZmZmSlAzczMzMzMLkA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"yellow","dash":"dash","width":2},"name":"\ud83d\udfe1 \u50b3\u7d71\u7269\u7406 (\u4e00\u865f\u98a8\u7403)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD9AMzMzMzMzOUCamZmZmTlVQM3MzMzMTFZAzczMzMwsVEAzMzMzMzNHQAAAAAAAAC1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMz8z8zMzMzMzPzPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaQDMzMzMzMxVAAAAAAAAAGkDNzMzMzMweQJqZmZmZmR9AAAAAAAAAGkAAAAAAAAAsQDMzMzMzMydAMzMzMzMzJEDNzMzMzMwUQGZmZmZmZhhAAAAAAAAAHkAAAAAAAAAEQM3MzMzMzPQ\u002fzczMzMzMHkCamZmZmZkZQDMzMzMzMw9AAAAAAAAABEAAAAAAAAAeQGZmZmZmZiFAzczMzMzMIUA="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUBmZmZmZmYCQM3MzMzMzARAzczMzMzMFEDNzMzMzMwQQJqZmZmZmSBAZmZmZmZmLEAzMzMzM3NAQGZmZmZmZkRAmpmZmZnZQEBmZmZmZuY\u002fQM3MzMzMzDZAAAAAAAAALkAAAAAAAAAlQJqZmZmZmR9AAAAAAAAAL0BmZmZmZmYtQM3MzMzMTDNAmpmZmZkZMEAAAAAAAAArQGZmZmZmZipAMzMzMzMzK0AzMzMzMzMsQDMzMzMzMy1AMzMzMzMzKkCamZmZmZksQAAAAAAAAC9AAAAAAACAMECamZmZmZkvQJqZmZmZmStAAAAAAAAALEAzMzMzMzMoQGZmZmZmZidAzczMzMzMJkAAAAAAAAAqQAAAAAAAACtAzczMzMzMJ0DNzMzMzMwnQJqZmZmZmSlAzczMzMzMLkA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"gold","width":3},"name":"\ud83c\udf1f AI \u6c7a\u7b56\u6a39 (\u4e00\u865f\u98a8\u7403)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAABmZmZmZuYwQDMzMzMzU1FAzczMzMxMVkCamZmZmVlIQGZmZmZmpk1AAAAAAACgUkAAAAAAAOBWQDMzMzMzs1VAAAAAAADgU0BmZmZmZmZFQAAAAAAAAC1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMz8z8zMzMzMzPzPwAAAAAAAAAAAAAAAAAAAACamZmZmZkFQDMzMzMzMxVAMzMzMzMzFUBmZmZmZmYiQJqZmZmZmR9AzczMzMxMNkAAAAAAAAA6QDMzMzMzszNAAAAAAAAANkAzMzMzMzMiQDMzMzMzMyRAmpmZmZmZM0AAAAAAAAAnQM3MzMzMzClAAAAAAAAAHkBmZmZmZmYeQAAAAAAAABBAMzMzMzMzD0DNzMzMzMwhQJqZmZmZmQVAzczMzMzMFEA="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUBmZmZmZmYCQM3MzMzMzARAzczMzMzMFEDNzMzMzMwQQJqZmZmZmSBAZmZmZmZmLEAzMzMzM3NAQGZmZmZmZkRAmpmZmZnZQEBmZmZmZuY\u002fQM3MzMzMzDZAAAAAAAAALkAAAAAAAAAlQJqZmZmZmR9AAAAAAAAAL0BmZmZmZmYtQM3MzMzMTDNAmpmZmZkZMEAAAAAAAAArQGZmZmZmZipAMzMzMzMzK0AzMzMzMzMsQDMzMzMzMy1AMzMzMzMzKkCamZmZmZksQAAAAAAAAC9AAAAAAACAMECamZmZmZkvQJqZmZmZmStAAAAAAAAALEAzMzMzMzMoQGZmZmZmZidAzczMzMzMJkAAAAAAAAAqQAAAAAAAACtAzczMzMzMJ0DNzMzMzMwnQJqZmZmZmSlAzczMzMzMLkA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"deepskyblue","dash":"dash","width":2},"name":"\ud83d\udd35 \u50b3\u7d71\u7269\u7406 (\u516b\u865f\u98a8\u7403)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMx1AAAAAAAAAKUBmZmZmZmZTQGZmZmZm5lZAZmZmZmbmVkAzMzMzM7NRQJqZmZmZmU9AZmZmZmbmNUAzMzMzM7MzQM3MzMzMzCxAMzMzMzMzM0CamZmZmZklQM3MzMzMzDpAAAAAAACAPkDNzMzMzMw4QJqZmZmZmS1AMzMzMzMzR0DNzMzMzIxKQGZmZmZmJkVAZmZmZmbmOUBmZmZmZuY\u002fQGZmZmZm5j1AzczMzMxMMEAzMzMzMzMmQGZmZmZmZi1AMzMzMzMzK0AzMzMzMzMZQM3MzMzMzAxAzczMzMzMIUCamZmZmZkhQDMzMzMzMyJAMzMzMzMzD0AzMzMzMzMZQGZmZmZmZilAMzMzMzMzLkA="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUBmZmZmZmYCQM3MzMzMzARAzczMzMzMFEDNzMzMzMwQQJqZmZmZmSBAZmZmZmZmLEAzMzMzM3NAQGZmZmZmZkRAmpmZmZnZQEBmZmZmZuY\u002fQM3MzMzMzDZAAAAAAAAALkAAAAAAAAAlQJqZmZmZmR9AAAAAAAAAL0BmZmZmZmYtQM3MzMzMTDNAmpmZmZkZMEAAAAAAAAArQGZmZmZmZipAMzMzMzMzK0AzMzMzMzMsQDMzMzMzMy1AMzMzMzMzKkCamZmZmZksQAAAAAAAAC9AAAAAAACAMECamZmZmZkvQJqZmZmZmStAAAAAAAAALEAzMzMzMzMoQGZmZmZmZidAzczMzMzMJkAAAAAAAAAqQAAAAAAAACtAzczMzMzMJ0DNzMzMzMwnQJqZmZmZmSlAzczMzMzMLkA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"red","width":3},"name":"\ud83d\udd34 AI \u6c7a\u7b56\u6a39 (\u516b\u865f\u98a8\u7403)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJqZmZmZmQ1AZmZmZmZmIUAAAAAAAIBRQAAAAAAAYFVAMzMzMzOTU0AAAAAAAMBEQGZmZmZmZipAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMz8z8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACamZmZmZkFQM3MzMzMzPQ\u002fzczMzMzM9D8AAAAAAAAaQDMzMzMzMxVAMzMzMzMzJkBmZmZmZmYtQJqZmZmZmSFAZmZmZmZmHkAzMzMzMzPzP5qZmZmZmQ1AMzMzMzMzHUAzMzMzMzPzPwAAAAAAAAAAzczMzMzM9D\u002fNzMzMzMz0P83MzMzMzPQ\u002fzczMzMzM9D\u002fNzMzMzMz0P83MzMzMzPQ\u002fMzMzMzMzD0A="},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#f2f5fa"},"error_y":{"color":"#f2f5fa"},"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"baxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"line":{"color":"#283442"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"marker":{"line":{"color":"#283442"}},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#506784"},"line":{"color":"rgb(17,17,17)"}},"header":{"fill":{"color":"#2a3f5f"},"line":{"color":"rgb(17,17,17)"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#f2f5fa","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#f2f5fa"},"geo":{"bgcolor":"rgb(17,17,17)","lakecolor":"rgb(17,17,17)","landcolor":"rgb(17,17,17)","showlakes":true,"showland":true,"subunitcolor":"#506784"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"dark"},"paper_bgcolor":"rgb(17,17,17)","plot_bgcolor":"rgb(17,17,17)","polar":{"angularaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","radialaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"yaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"zaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"}},"shapedefaults":{"line":{"color":"#f2f5fa"}},"sliderdefaults":{"bgcolor":"#C8D4E3","bordercolor":"rgb(17,17,17)","borderwidth":1,"tickwidth":0},"ternary":{"aaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"baxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","caxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"title":{"x":0.05},"updatemenudefaults":{"bgcolor":"#506784","borderwidth":0},"xaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2}}},"title":{"text":"\ud83c\udf00 \u9999\u6e2f\u98a8\u66b4\u4fe1\u865f\u9810\u6e2c\uff1a\u56db\u7dad\u5730\u5f62\u4fee\u6b63 AI \u96d9\u8ecc\u5236"},"yaxis":{"title":{"text":"\u767c\u51fa\u6a5f\u7387 (%)"}},"xaxis":{"title":{"text":"\u9810\u6e2c\u6642\u9593"}},"hovermode":"x unified","paper_bgcolor":"#1e1e1e","plot_bgcolor":"#1e1e1e"},                        {"responsive": true}                    )                };            </script>        </div></div>
+        
+        <!-- 🗺️ Leaflet 互動地圖容器 -->
+        <div id="typhoon-map"></div>
+        <div style="font-size: 12px; color: #888; text-align: center; margin-top: 5px;">*地圖路徑目前為系統參考模組，具體風力威脅請參考上方 AI 機率預測。</div>
+        
+        <!-- 📋 數據列表 -->
+        <div class="table-container">
+            <h3>📋 四維綜合預測數據表</h3>
+            <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>時間</th>
+      <th>物理一號機率 (%)</th>
+      <th>物理八號機率 (%)</th>
+      <th>AI 一號機率 (%)</th>
+      <th>AI 八號機率 (%)</th>
+      <th>陣風分歧度 (Uncertainty)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>07月24日 08:00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.2</td>
+    </tr>
+    <tr>
+      <td>07月24日 14:00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>16.9</td>
+      <td>0.0</td>
+      <td>2.3</td>
+    </tr>
+    <tr>
+      <td>07月24日 20:00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>69.3</td>
+      <td>0.0</td>
+      <td>2.6</td>
+    </tr>
+    <tr>
+      <td>07月25日 02:00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>89.2</td>
+      <td>0.0</td>
+      <td>5.2</td>
+    </tr>
+    <tr>
+      <td>07月25日 08:00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>48.7</td>
+      <td>0.0</td>
+      <td>4.2</td>
+    </tr>
+    <tr>
+      <td>07月25日 14:00</td>
+      <td>31.5</td>
+      <td>7.3</td>
+      <td>59.3</td>
+      <td>3.7</td>
+      <td>8.3</td>
+    </tr>
+    <tr>
+      <td>07月25日 20:00</td>
+      <td>25.2</td>
+      <td>12.5</td>
+      <td>74.5</td>
+      <td>8.7</td>
+      <td>14.2</td>
+    </tr>
+    <tr>
+      <td>07月26日 02:00</td>
+      <td>84.9</td>
+      <td>77.6</td>
+      <td>91.5</td>
+      <td>70.0</td>
+      <td>32.9</td>
+    </tr>
+    <tr>
+      <td>07月26日 08:00</td>
+      <td>89.2</td>
+      <td>91.6</td>
+      <td>86.8</td>
+      <td>85.5</td>
+      <td>40.8</td>
+    </tr>
+    <tr>
+      <td>07月26日 14:00</td>
+      <td>80.7</td>
+      <td>91.6</td>
+      <td>79.5</td>
+      <td>78.3</td>
+      <td>33.7</td>
+    </tr>
+    <tr>
+      <td>07月26日 20:00</td>
+      <td>46.4</td>
+      <td>70.8</td>
+      <td>42.8</td>
+      <td>41.5</td>
+      <td>31.9</td>
+    </tr>
+    <tr>
+      <td>07月27日 02:00</td>
+      <td>14.5</td>
+      <td>63.2</td>
+      <td>14.5</td>
+      <td>13.2</td>
+      <td>22.8</td>
+    </tr>
+    <tr>
+      <td>07月27日 08:00</td>
+      <td>0.0</td>
+      <td>21.9</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>15.0</td>
+    </tr>
+    <tr>
+      <td>07月27日 14:00</td>
+      <td>0.0</td>
+      <td>19.7</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10.5</td>
+    </tr>
+    <tr>
+      <td>07月27日 20:00</td>
+      <td>0.0</td>
+      <td>14.4</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>7.9</td>
+    </tr>
+    <tr>
+      <td>07月28日 02:00</td>
+      <td>1.2</td>
+      <td>19.2</td>
+      <td>1.2</td>
+      <td>1.2</td>
+      <td>15.5</td>
+    </tr>
+    <tr>
+      <td>07月28日 08:00</td>
+      <td>1.2</td>
+      <td>10.8</td>
+      <td>1.2</td>
+      <td>0.0</td>
+      <td>14.7</td>
+    </tr>
+    <tr>
+      <td>07月28日 14:00</td>
+      <td>0.0</td>
+      <td>26.8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>19.3</td>
+    </tr>
+    <tr>
+      <td>07月28日 20:00</td>
+      <td>0.0</td>
+      <td>30.5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>16.1</td>
+    </tr>
+    <tr>
+      <td>07月29日 02:00</td>
+      <td>6.5</td>
+      <td>24.8</td>
+      <td>2.7</td>
+      <td>2.7</td>
+      <td>13.5</td>
+    </tr>
+    <tr>
+      <td>07月29日 08:00</td>
+      <td>5.3</td>
+      <td>14.8</td>
+      <td>5.3</td>
+      <td>1.3</td>
+      <td>13.2</td>
+    </tr>
+    <tr>
+      <td>07月29日 14:00</td>
+      <td>6.5</td>
+      <td>46.4</td>
+      <td>5.3</td>
+      <td>1.3</td>
+      <td>13.6</td>
+    </tr>
+    <tr>
+      <td>07月29日 20:00</td>
+      <td>7.7</td>
+      <td>53.1</td>
+      <td>9.2</td>
+      <td>6.5</td>
+      <td>14.1</td>
+    </tr>
+    <tr>
+      <td>07月30日 02:00</td>
+      <td>7.9</td>
+      <td>42.3</td>
+      <td>7.9</td>
+      <td>5.3</td>
+      <td>14.6</td>
+    </tr>
+    <tr>
+      <td>07月30日 08:00</td>
+      <td>6.5</td>
+      <td>25.9</td>
+      <td>22.3</td>
+      <td>11.1</td>
+      <td>13.1</td>
+    </tr>
+    <tr>
+      <td>07月30日 14:00</td>
+      <td>14.0</td>
+      <td>31.9</td>
+      <td>26.0</td>
+      <td>14.7</td>
+      <td>14.3</td>
+    </tr>
+    <tr>
+      <td>07月30日 20:00</td>
+      <td>11.6</td>
+      <td>29.9</td>
+      <td>19.7</td>
+      <td>8.8</td>
+      <td>15.5</td>
+    </tr>
+    <tr>
+      <td>07月31日 02:00</td>
+      <td>10.1</td>
+      <td>16.3</td>
+      <td>22.0</td>
+      <td>7.6</td>
+      <td>16.5</td>
+    </tr>
+    <tr>
+      <td>07月31日 08:00</td>
+      <td>5.2</td>
+      <td>11.1</td>
+      <td>9.1</td>
+      <td>1.2</td>
+      <td>15.8</td>
+    </tr>
+    <tr>
+      <td>07月31日 14:00</td>
+      <td>6.1</td>
+      <td>14.7</td>
+      <td>10.1</td>
+      <td>3.7</td>
+      <td>13.8</td>
+    </tr>
+    <tr>
+      <td>07月31日 20:00</td>
+      <td>7.5</td>
+      <td>13.6</td>
+      <td>19.6</td>
+      <td>7.3</td>
+      <td>14.0</td>
+    </tr>
+    <tr>
+      <td>08月01日 02:00</td>
+      <td>2.5</td>
+      <td>6.3</td>
+      <td>11.5</td>
+      <td>1.2</td>
+      <td>12.1</td>
+    </tr>
+    <tr>
+      <td>08月01日 08:00</td>
+      <td>1.3</td>
+      <td>3.6</td>
+      <td>12.9</td>
+      <td>0.0</td>
+      <td>11.7</td>
+    </tr>
+    <tr>
+      <td>08月01日 14:00</td>
+      <td>7.7</td>
+      <td>8.9</td>
+      <td>7.5</td>
+      <td>1.3</td>
+      <td>11.4</td>
+    </tr>
+    <tr>
+      <td>08月01日 20:00</td>
+      <td>6.4</td>
+      <td>8.8</td>
+      <td>7.6</td>
+      <td>1.3</td>
+      <td>13.0</td>
+    </tr>
+    <tr>
+      <td>08月02日 02:00</td>
+      <td>3.9</td>
+      <td>9.1</td>
+      <td>4.0</td>
+      <td>1.3</td>
+      <td>13.5</td>
+    </tr>
+    <tr>
+      <td>08月02日 08:00</td>
+      <td>2.5</td>
+      <td>3.9</td>
+      <td>3.9</td>
+      <td>1.3</td>
+      <td>11.9</td>
+    </tr>
+    <tr>
+      <td>08月02日 14:00</td>
+      <td>7.5</td>
+      <td>6.3</td>
+      <td>8.9</td>
+      <td>1.3</td>
+      <td>11.9</td>
+    </tr>
+    <tr>
+      <td>08月02日 20:00</td>
+      <td>8.7</td>
+      <td>12.7</td>
+      <td>2.7</td>
+      <td>1.3</td>
+      <td>12.8</td>
+    </tr>
+    <tr>
+      <td>08月03日 02:00</td>
+      <td>8.9</td>
+      <td>15.1</td>
+      <td>5.2</td>
+      <td>3.9</td>
+      <td>15.4</td>
+    </tr>
+  </tbody>
+</table>
         </div>
     </div>
 
+    <!-- 🗺️ 引入 Leaflet JS 與渲染邏輯 -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([21.2, 115.0], 7);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 12, minZoom: 5 }).addTo(map);
+        const map = L.map('typhoon-map').setView([21.2, 115.0], 7);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 12, minZoom: 5,
+            attribution: '&copy; OpenStreetMap & CartoDB'
+        }).addTo(map);
 
         const hkCoords = [22.3193, 114.1694];
-        [
-            { r: 200000, c: '#eab308', l: '200km 外圍烈風圈' },
-            { r: 100000, c: '#f97316', l: '100km 暴風核心圈' },
-            { r: 50000,  c: '#ef4444', l: '50km 穿心直擊圈' }
-        ].forEach(ring => {
-            L.circle(hkCoords, { color: ring.c, fillColor: ring.c, fillOpacity: 0.08, weight: 1.5, dashArray: '4,6' }).bindTooltip(ring.l).addTo(map);
+        const rings = [
+            { r: 200000, c: '#eab308', label: '200km 外圍烈風圈' },
+            { r: 100000, c: '#f97316', label: '100km 暴風核心圈' },
+            { r: 50000,  c: '#ef4444', label: '50km 穿心直擊圈' }
+        ];
+
+        rings.forEach(ring => {
+            L.circle(hkCoords, {
+                color: ring.c, fillColor: ring.c, fillOpacity: 0.08, weight: 1.5, dashArray: '4, 6'
+            }).bindTooltip(ring.label).addTo(map);
         });
 
-        L.circleMarker(hkCoords, { radius: 6, color: '#3b82f6', fillColor: '#60a5fa', fillOpacity: 1 }).addTo(map).bindPopup('<b>香港 (Hong Kong)</b>');
+        L.circleMarker(hkCoords, { radius: 6, color: '#3b82f6', fillColor: '#60a5fa', fillOpacity: 1 }).addTo(map)
+         .bindPopup('<b>香港 (Hong Kong)</b><br>預警系統定位中心');
 
+        // 注入由 Python 生成的 GeoJSON 數據
         const geojsonData = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"model": "ECMWF AIFS (AI)", "color": "#a855f7"}, "geometry": {"type": "LineString", "coordinates": [[124.5, 16.0], [120.0, 18.0], [116.2, 20.2], [113.8, 21.9]]}}, {"type": "Feature", "properties": {"model": "Google GraphCast", "color": "#06b6d4"}, "geometry": {"type": "LineString", "coordinates": [[124.5, 16.0], [119.8, 17.8], [115.3, 19.8], [112.9, 21.4]]}}, {"type": "Feature", "properties": {"model": "GFS 物理模式", "color": "#ef4444"}, "geometry": {"type": "LineString", "coordinates": [[124.5, 16.0], [119.2, 17.5], [114.5, 19.5], [111.8, 20.8]]}}]};
+
         L.geoJSON(geojsonData, {
-            style: f => ({ color: f.properties.color, weight: 3.5, opacity: 0.85 }),
-            onEachFeature: (f, l) => l.bindPopup('<b>預測模式：' + f.properties.model + '</b>')
+            style: function(feature) {
+                return { color: feature.properties.color, weight: 3.5, opacity: 0.85 };
+            },
+            onEachFeature: function(feature, layer) {
+                layer.bindPopup('<b>預測模式：' + feature.properties.model + '</b>');
+            }
         }).addTo(map);
 
         const legend = L.control({ position: 'bottomright' });
