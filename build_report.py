@@ -38,14 +38,19 @@ ai_model.fit(X_train, y_train)
 print("⚡ 正在向 Open-Meteo 請求數據...")
 url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs04&forecast_days=10"
 url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
-url_dir = "https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs04&forecast_days=10"
+url_dir = f"https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs025&forecast_days=10"
 
 try:
     res_ec = requests.get(url_ecmwf, timeout=15).json()
+    if 'error' in res_ec: raise Exception(f"ECMWF API 錯誤: {res_ec.get('reason')}")
+        
     res_gfs = requests.get(url_gfs, timeout=15).json()
+    if 'error' in res_gfs: raise Exception(f"GFS API 錯誤: {res_gfs.get('reason')}")
+
     res_dir = requests.get(url_dir, timeout=15).json()
+    if 'error' in res_dir: raise Exception(f"風向 API 錯誤: {res_dir.get('reason')}")
 except Exception as e:
-    print(f"❌ API 請求失敗: {e}")
+    print(f"❌ API 請求徹底失敗: {e}")
     exit(1)
 
 res_ec_list = res_ec if isinstance(res_ec, list) else [res_ec]
@@ -88,11 +93,11 @@ for idx, t_str in enumerate(times):
     
     center_dir = dir_dict.get(t_str, 90) or 90
     
-    # 🔥 關鍵修復：嚴格限制時間窗，防止「大氣潮汐」假陽性誤判
-    ec_press_drop_24h = ec_press_min[idx - 24] - ec_press if idx >= 24 else 0.0
-    ec_press_drop_3h  = ec_press_min[idx - 3] - ec_press if idx >= 3 else 0.0
-    gfs_press_drop_24h = gfs_press_min[idx - 24] - gfs_press if idx >= 24 else 0.0
-    gfs_press_drop_3h  = gfs_press_min[idx - 3] - gfs_press if idx >= 3 else 0.0
+    # 🔥 關鍵修復 Bug：用 np.zeros_like() 產生陣列，防止 float object not subscriptable
+    ec_press_drop_24h = ec_press_min[idx - 24] - ec_press if idx >= 24 else np.zeros_like(ec_press)
+    ec_press_drop_3h  = ec_press_min[idx - 3] - ec_press if idx >= 3 else np.zeros_like(ec_press)
+    gfs_press_drop_24h = gfs_press_min[idx - 24] - gfs_press if idx >= 24 else np.zeros_like(gfs_press)
+    gfs_press_drop_3h  = gfs_press_min[idx - 3] - gfs_press if idx >= 3 else np.zeros_like(gfs_press)
     
     multiplier = 0.8 if (center_dir >= 315) or (center_dir <= 45) else (1.05 if 90 <= center_dir <= 180 else 1.0)
         
@@ -111,6 +116,7 @@ for idx, t_str in enumerate(times):
     prob_t1_phy = round(((np.sum(ec_t1_phy)/len_ec*100)*0.6) + ((np.sum(gfs_t1_phy)/len_gfs*100)*0.4), 1)
     prob_t8_phy = round(((np.sum(ec_t8_phy)/len_ec*100)*0.6) + ((np.sum(gfs_t8_phy)/len_gfs*100)*0.4), 1)
 
+    # 這裡 AI predict 不會再報錯，因為丟入的皆為正確 shape 的 array 數據
     ec_ai_preds = np.array([ai_model.predict([[ec_press[m], ec_press_drop_24h[m], ec_press_drop_3h[m], ec_winds_adj[m]]])[0] for m in range(len(ec_press))])
     gfs_ai_preds = np.array([ai_model.predict([[gfs_press[m], gfs_press_drop_24h[m], gfs_press_drop_3h[m], gfs_winds_adj[m]]])[0] for m in range(len(gfs_press))])
     
