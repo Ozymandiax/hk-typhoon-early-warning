@@ -368,7 +368,7 @@ html_content = f"""
                 style: function(feature) {{
                     if (feature.properties.type === "track_line") {{
                         return {{ color: feature.properties.color, weight: 3, opacity: 0.7, dashArray: '5, 5' }};
-                    }
+                    }}
                 }},
                 pointToLayer: function(feature, latlng) {{
                     return L.circleMarker(latlng, {{
@@ -383,16 +383,16 @@ html_content = f"""
                 onEachFeature: function(feature, layer) {{
                     if (feature.geometry.type === "Point") {{
                         const p = feature.properties;
-                        layer.bindPopup(`
-                            <div style="font-size:13px; line-height:1.5;">
-                                <b style="color:${{p.color}};">${{p.category}} (${{p.wind_speed}})</b><br>
-                                <b>時間：</b>${{p.time}}<br>
-                                <b>模式：</b>${{p.model}}<br>
-                                <b>距港：</b>${{p.dist_hk}}<br>
-                                <b>位置：</b>${{p.position}}
-                            </div>
-                        `);
-                    }
+                        layer.bindPopup(
+                            '<div style="font-size:13px; line-height:1.5;">' +
+                            '<b style="color:' + p.color + ';">' + p.category + ' (' + p.wind_speed + ')</b><br>' +
+                            '<b>時間：</b>' + p.time + '<br>' +
+                            '<b>模式：</b>' + p.model + '<br>' +
+                            '<b>距港：</b>' + p.dist_hk + '<br>' +
+                            '<b>位置：</b>' + p.position +
+                            '</div>'
+                        );
+                    }}
                 }}
             }}).addTo(map);
         }}
@@ -403,12 +403,12 @@ html_content = f"""
             const div = L.DomUtil.create('div', 'tc-legend');
             div.innerHTML = `
                 <b>🌀 熱帶氣旋等級</b><br>
-                <span class="legend-badge" style="background:#3b82f6;"></span>熱帶低氣壓 (<41 km/h)<br>
+                <span class="legend-badge" style="background:#3b82f6;"></span>熱帶低氣壓 (&lt;41 km/h)<br>
                 <span class="legend-badge" style="background:#06b6d4;"></span>熱帶風暴 (41-62 km/h)<br>
                 <span class="legend-badge" style="background:#eab308;"></span>強烈熱帶風暴 (63-87 km/h)<br>
                 <span class="legend-badge" style="background:#f97316;"></span>颱風 (88-117 km/h)<br>
                 <span class="legend-badge" style="background:#ef4444;"></span>強颱風 (118-149 km/h)<br>
-                <span class="legend-badge" style="background:#a855f7;"></span>超強颱風 (≥150 km/h)
+                <span class="legend-badge" style="background:#a855f7;"></span>超強颱風 (&ge;150 km/h)
             `;
             return div;
         }};
