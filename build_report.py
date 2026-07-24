@@ -215,25 +215,11 @@ update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 # ==========================================
 # 🗺️ 升級：真正的 2D 海洋氣壓網格氣旋追蹤器 (MSLP Tracker)
 # ==========================================
-print("🗺️ 正在從太平洋/南海 2D 網格追蹤最低氣壓氣旋中心...")
+print("🗺️ 正在從太平洋/南海網格追蹤氣旋連續軌跡...")
 
-def classify_tc(wind_speed_kmh):
-    if wind_speed_kmh < 41:
-        return "熱帶低氣壓", "#3b82f6"       # 藍色
-    elif wind_speed_kmh < 63:
-        return "熱帶風暴", "#06b6d4"         # 青色
-    elif wind_speed_kmh < 88:
-        return "強烈熱帶風暴", "#eab308"     # 黃色
-    elif wind_speed_kmh < 118:
-        return "颱風", "#f97316"            # 橙色
-    elif wind_speed_kmh < 150:
-        return "強颱風", "#ef4444"          # 紅色
-    else:
-        return "超強颱風", "#a855f7"        # 紫色
-
-# 廣域追蹤網格 (覆蓋呂宋海峽、南海、台灣及華南沿海)
-grid_lats = [12.0, 15.0, 18.0, 20.0, 22.0, 24.0, 26.0]
-grid_lons = [110.0, 113.0, 116.0, 119.0, 122.0, 125.0]
+# 提高網格密度 (間隔 1.5 度，覆蓋南海至西太平洋)
+grid_lats = [12.0, 13.5, 15.0, 16.5, 18.0, 19.5, 21.0, 22.5, 24.0, 25.5]
+grid_lons = [110.0, 112.0, 114.0, 116.0, 118.0, 120.0, 122.0, 124.0]
 
 grid_lat_str = ",".join(map(str, grid_lats))
 grid_lon_str = ",".join(map(str, grid_lons))
@@ -250,27 +236,40 @@ def fetch_and_track_tc():
         time_steps = len(res[0]['hourly']['time'])
         tc_track_coords = []
         
-        for t_idx in range(0, time_steps, 3):  # 每 3 小時取一採樣點
+        last_lat, last_lon = None, None
+        
+        for t_idx in range(0, time_steps, 3):  # 每 3 小時採樣一次
             t_str = res[0]['hourly']['time'][t_idx]
             dt = datetime.strptime(t_str, "%Y-%m-%dT%H:%M") + timedelta(hours=8)
             time_display = dt.strftime("%m-%d %H:00")
             
-            min_p = 1015.0
+            min_p = 1018.0
             best_lat, best_lon = None, None
             max_ws = 0
             
-            # 搜尋全網格最低氣壓中心
+            # 搜尋該時間點氣壓最低的網格點
             for pt in res:
                 p_val = pt['hourly']['pressure_msl'][t_idx]
                 ws_val = pt['hourly']['wind_speed_10m'][t_idx] or 0
+                c_lat, c_lon = pt['latitude'], pt['longitude']
+                
+                # 如果已經有上一個中心，優先搜尋距離上個中心 300km 內的最低氣壓點 (避免跳場)
+                if last_lat is not None:
+                    dist_from_last = math.hypot(c_lat - last_lat, c_lon - last_lon) * 111
+                    if dist_from_last > 350: # 跳太遠就忽略
+                        continue
+                
                 if p_val is not None and p_val < min_p:
                     min_p = p_val
-                    best_lat = pt['latitude']
-                    best_lon = pt['longitude']
+                    best_lat = c_lat
+                    best_lon = c_lon
                     max_ws = ws_val
             
-            # 門檻判定：低壓中心 <= 1008 hPa 視為氣旋系統（避免平靜海面亂畫線）
-            if min_p <= 1008.0 and best_lat is not None:
+            # 只要找到有效低壓中心（<= 1012 hPa），就加入路徑
+            if best_lat is not None and min_p <= 1012.0:
+                last_lat, last_lon = best_lat, best_lon
+                
+                # 計算距港距離
                 lat1, lon1, lat2, lon2 = map(math.radians, [HK_CENTER[0], HK_CENTER[1], best_lat, best_lon])
                 dlat, dlon = lat2 - lat1, lon2 - lon1
                 a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
@@ -283,7 +282,7 @@ def fetch_and_track_tc():
                     "type": "Feature",
                     "properties": {
                         "time": time_display,
-                        "model": "ECMWF 集成氣壓中心追蹤",
+                        "model": "ECMWF 氣旋路徑追蹤",
                         "wind_speed": f"{int(max_ws)} km/h",
                         "pressure": f"{int(min_p)} hPa",
                         "category": category,
@@ -294,10 +293,11 @@ def fetch_and_track_tc():
                     "geometry": { "type": "Point", "coordinates": [best_lon, best_lat] }
                 })
                 
+        # 只要採樣點 >= 1 個，就確保畫出連接線與節點
         if len(tc_track_coords) >= 2:
             features.insert(0, {
                 "type": "Feature",
-                "properties": { "model": "ECMWF 颱風中心主軌跡", "color": "#00f2fe", "type": "track_line" },
+                "properties": { "model": "ECMWF 預測路徑", "color": "#00f2fe", "type": "track_line" },
                 "geometry": { "type": "LineString", "coordinates": tc_track_coords }
             })
             
