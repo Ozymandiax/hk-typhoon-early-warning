@@ -177,7 +177,7 @@ df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 # ==========================================
 # 🧠 AI 自動生成綜合結論
 # ==========================================
-max_t8_idx = df_res_filtered["AI 八號機率 (%)"].idxmax()
+max_t8_idx = int(df_res_filtered["AI 八號機率 (%)"].idxmax())
 max_t8_row = df_res_filtered.iloc[max_t8_idx]
 
 peak_time = max_t8_row["時間"]
