@@ -9,49 +9,26 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0b132b; color: #e0e0e0; margin: 0; padding: 15px; }
         .container { max-width: 1100px; margin: 0 auto; }
-        .header { text-align: center; padding: 20px 0; border-bottom: 1px solid #1c2541; }
-        h1 { margin: 0; color: #ff5252; font-size: 24px; }
-        .update-time { color: #888; font-size: 13px; margin-top: 8px; }
-        .intro-box { background: #1c2541; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 14px; line-height: 1.6; border-left: 4px solid #4facfe; }
-        .table-container { margin-top: 25px; overflow-x: auto; background: #1c2541; padding: 15px; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; }
-        th, td { padding: 10px; border-bottom: 1px solid #3a506b; }
-        th { background-color: #0b132b; color: #fff; }
-        tr:hover { background-color: #243256; }
-        
-        #typhoon-map { width: 100%; height: 550px; border-radius: 10px; background: #0b132b; margin-top: 20px; border: 1px solid #3a506b; }
-        .tc-legend { background: rgba(11, 19, 43, 0.9); color: #fff; padding: 12px; border-radius: 8px; font-size: 12px; border: 1px solid #3a506b; line-height: 1.8; }
+        h1 { text-align: center; color: #ff5252; font-size: 24px; padding-bottom:10px; border-bottom: 1px solid #1c2541;}
+        .update-time { text-align: center; color: #888; font-size: 13px; margin-bottom: 20px; }
+        #typhoon-map { width: 100%; height: 550px; border-radius: 10px; background: #0b132b; margin: 20px 0; border: 1px solid #3a506b; }
+        .tc-legend { background: rgba(11,19,43,0.9); color: #fff; padding: 12px; border-radius: 8px; font-size: 12px; border: 1px solid #3a506b; line-height: 1.8; }
         .legend-badge { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🌀 香港潛在風暴雙軌早期預警與氣旋追蹤系統</h1>
-            <div class="update-time">最後自動更新（香港時間 HKT）: 2026-07-24 23:35</div>
-        </div>
+        <h1>🌀 香港潛在風暴預警與氣旋質心追蹤系統</h1>
+        <div class="update-time">最後更新（HKT）: 2026-07-24 23:41</div>
         
-        
-    <div style="background: linear-gradient(135deg, #4b1313, #8b0000); padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ff3333; color: #fff;">
-        🚨 <b>AI 實時威脅判定：</b><br>
-        根據最新四維運算，預計<b>最有可能懸掛八號風球的時間為【07月26日 08:00】</b>，
-        最高機率達到 <b>91.2%</b> 
-        <span style="color:#ffaaaa;">(陣風分歧度：34.1 km/h)</span>。
-        <br><br>📉 <b>( 8 ➡️ 3) 最有落波時間為香港時間【07月27日 02:00】，機率為 9.3%</b> <span style='color:#ffaaaa;'>(陣風分歧度：16.5 km/h)</span>。
-    </div>
-    
-        
-        <div class="intro-box">
-            💡 <b>系統演算法升級：</b> 本系統整合「五星區域極端值聚合」、「風向地形修正」、「3小時/24小時氣壓持續下沉特徵」。下方地圖由 Open-Meteo 廣域海洋 2D 氣壓網格自動追蹤最低氣壓中心，精確呈現熱帶氣旋發育與移動軌迹。
+        <div style="background: #1c2541; padding: 15px; border-radius: 6px; font-size: 14px; line-height: 1.6; border-left: 4px solid #4facfe;">
+            💡 <b>地圖追蹤升級：</b> 已啟用「10x10 高密度海洋網格」並套用「質心平滑演算法 (Center of Mass)」。系統會自動過濾雜訊，精確連線低壓槽與熱帶氣旋的平滑移動軌跡，拒絕卡頓跳躍！
         </div>
 
         <div><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="aeb2fa5c-9519-4118-947c-aca41ab99107" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("aeb2fa5c-9519-4118-947c-aca41ab99107")) {                    Plotly.newPlot(                        "aeb2fa5c-9519-4118-947c-aca41ab99107",                        [{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"yellow","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"\ud83d\udfe1 \u50b3\u7d71\u7269\u7406 (\u4e00\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMzMzPzPzMzMzMzM0ZAmpmZmZmZR0BmZmZmZgZXQJqZmZmZGVhAZmZmZmbGVEAzMzMzMzNFQAAAAAAAAC1AzczMzMzM9D8AAAAAAAAAADMzMzMzM\u002fM\u002fAAAAAAAAAAAAAAAAAAAAAM3MzMzMzPQ\u002fzczMzMzM9D\u002fNzMzMzMz0P83MzMzMzPQ\u002fzczMzMzMFEAzMzMzMzMVQDMzMzMzMxVAAAAAAAAAKEAAAAAAAAAoQJqZmZmZmSlAMzMzMzOzMEAAAAAAAAAaQJqZmZmZmTFAmpmZmZmZJkAAAAAAAAApQJqZmZmZmRNAAAAAAAAAIUCamZmZmZkhQJqZmZmZmQ1AZmZmZmZmHkCamZmZmZkZQAAAAAAAABpAMzMzMzMzFUA="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"gold","width":3},"marker":{"size":7},"mode":"lines+markers","name":"\ud83c\udf1f AI \u6c7a\u7b56\u6a39 (\u4e00\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAABmZmZmZmZCQDMzMzMz01VAZmZmZmZmV0BmZmZmZmZRQDMzMzMzE1FAmpmZmZl5VUDNzMzMzKxYQGZmZmZmxldAzczMzMxMUkAAAAAAAABEQJqZmZmZmSJAzczMzMzM9D8AAAAAAAAAADMzMzMzM\u002fM\u002fMzMzMzMz8z8AAAAAAAAAAM3MzMzMzPQ\u002fzczMzMzM9D\u002fNzMzMzMz0P83MzMzMzPQ\u002fzczMzMzM9D8zMzMzMzMVQAAAAAAAABBAAAAAAAAAKECamZmZmZkiQM3MzMzMTDZAAAAAAACAN0AzMzMzMzM7QM3MzMzMjEBAMzMzMzMzO0BmZmZmZmY6QGZmZmZmZjBAzczMzMxMNEAAAAAAAAAyQJqZmZmZmSFAAAAAAAAALEBmZmZmZmYwQM3MzMzMzCRAMzMzMzMzJ0A="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"deepskyblue","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"\ud83d\udd35 \u50b3\u7d71\u7269\u7406 (\u516b\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMy9AzczMzMxMN0DNzMzMzMxVQDMzMzMzs1hAmpmZmZm5V0AAAAAAAKBTQGZmZmZmhlFAZmZmZmbmNUBmZmZmZmYjQDMzMzMzMyNAZmZmZmZmIUAzMzMzMzMTQDMzMzMzszpAZmZmZmbmP0BmZmZmZuY0QJqZmZmZGTBAMzMzMzMzR0DNzMzMzIxIQM3MzMzMjEJAAAAAAACAPEDNzMzMzMw8QGZmZmZm5j1AmpmZmZkZM0AAAAAAAAAsQGZmZmZm5jJAzczMzMzMMkAAAAAAAAAsQGZmZmZmZiZAmpmZmZmZKEDNzMzMzMwjQM3MzMzMzChAZmZmZmZmIUAAAAAAAAArQGZmZmZmZiZAAAAAAAAAJEA="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"red","width":3},"marker":{"size":7},"mode":"lines+markers","name":"\ud83d\udd34 AI \u6c7a\u7b56\u6a39 (\u516b\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMxNAMzMzMzOzM0AAAAAAACBVQM3MzMzMzFZAmpmZmZn5UUAzMzMzM3NBQJqZmZmZmSJAzczMzMzM9D8AAAAAAAAAADMzMzMzM\u002fM\u002fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzczMzMzM9D\u002fNzMzMzMz0P83MzMzMzPQ\u002fAAAAAAAAAACamZmZmZkFQAAAAAAAAAAAAAAAAAAAEEAAAAAAAAAQQJqZmZmZmShAAAAAAAAAJEBmZmZmZmYeQM3MzMzMzCNAmpmZmZmZE0AzMzMzMzMPQAAAAAAAAARAzczMzMzMDEAzMzMzMzPzPzMzMzMzMwNAMzMzMzMzA0AzMzMzMzMDQJqZmZmZmQVAzczMzMzM9D8="},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#f2f5fa"},"error_y":{"color":"#f2f5fa"},"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"baxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"line":{"color":"#283442"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"marker":{"line":{"color":"#283442"}},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#506784"},"line":{"color":"rgb(17,17,17)"}},"header":{"fill":{"color":"#2a3f5f"},"line":{"color":"rgb(17,17,17)"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#f2f5fa","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#f2f5fa"},"geo":{"bgcolor":"rgb(17,17,17)","lakecolor":"rgb(17,17,17)","landcolor":"rgb(17,17,17)","showlakes":true,"showland":true,"subunitcolor":"#506784"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"dark"},"paper_bgcolor":"rgb(17,17,17)","plot_bgcolor":"rgb(17,17,17)","polar":{"angularaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","radialaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"yaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"zaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"}},"shapedefaults":{"line":{"color":"#f2f5fa"}},"sliderdefaults":{"bgcolor":"#C8D4E3","bordercolor":"rgb(17,17,17)","borderwidth":1,"tickwidth":0},"ternary":{"aaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"baxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","caxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"title":{"x":0.05},"updatemenudefaults":{"bgcolor":"#506784","borderwidth":0},"xaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2}}},"yaxis":{"title":{"text":"\u767c\u51fa\u6a5f\u7387 (%)"},"range":[0,100]},"title":{"text":"\ud83c\udf00 \u9999\u6e2f\u98a8\u66b4\u4fe1\u865f\u9810\u6e2c\uff1a\u56db\u7dad\u5730\u5f62\u4fee\u6b63 AI \u96d9\u8ecc\u5236"},"xaxis":{"title":{"text":"\u9810\u6e2c\u6642\u9593"}},"hovermode":"x unified","paper_bgcolor":"#1e1e1e","plot_bgcolor":"#1e1e1e"},                        {"responsive": true}                    )                };            </script>        </div></div>
-        
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="a0a9d395-e1a5-4b0e-922e-50caf59bfe8c" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("a0a9d395-e1a5-4b0e-922e-50caf59bfe8c")) {                    Plotly.newPlot(                        "a0a9d395-e1a5-4b0e-922e-50caf59bfe8c",                        [{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"yellow","dash":"dash","width":2},"mode":"lines+markers","name":"\ud83d\udfe1 \u50b3\u7d71\u7269\u7406 (\u4e00\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMzMzPzP83MzMzMzEZAmpmZmZmZR0BmZmZmZgZXQAAAAAAAAFlAMzMzMzOzWEBmZmZmZsZWQDMzMzMzs1dAZmZmZmYmSUBmZmZmZiZEQAAAAAAAQEpAZmZmZmYmREAzMzMzM7M9QM3MzMzMTFBAMzMzMzPTU0AzMzMzMzNOQM3MzMzMDExAZmZmZmZmVEAzMzMzMxNWQJqZmZmZOVJAzczMzMxsUUBmZmZmZoZTQM3MzMzM7FFAZmZmZmZmSEDNzMzMzEw\u002fQGZmZmZmZklAZmZmZmamR0DNzMzMzAxBQDMzMzMzMztAAAAAAADARECamZmZmVlEQM3MzMzMTDpAZmZmZmbmOEBmZmZmZuY\u002fQM3MzMzMDEBAAAAAAACAO0A="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"gold","dash":"solid","width":3},"mode":"lines+markers","name":"\ud83c\udf1f AI \u6c7a\u7b56\u6a39 (\u4e00\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAABmZmZmZmZCQDMzMzMz01VAZmZmZmZmV0BmZmZmZmZRQDMzMzMzE1FAmpmZmZl5VUDNzMzMzKxYQGZmZmZmxldAzczMzMxMUkAAAAAAAABEQJqZmZmZmSJAzczMzMzM9D8AAAAAAAAAADMzMzMzM\u002fM\u002fMzMzMzMz8z8AAAAAAAAAAM3MzMzMzPQ\u002fzczMzMzM9D\u002fNzMzMzMz0P83MzMzMzPQ\u002fzczMzMzM9D8zMzMzMzMVQAAAAAAAABBAAAAAAAAAKECamZmZmZkiQM3MzMzMTDZAAAAAAACAN0AzMzMzMzM7QM3MzMzMjEBAMzMzMzMzO0BmZmZmZmY6QGZmZmZmZjBAzczMzMxMNEAAAAAAAAAyQJqZmZmZmSFAAAAAAAAALEBmZmZmZmYwQM3MzMzMzCRAMzMzMzMzJ0A="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"deepskyblue","dash":"dash","width":2},"mode":"lines+markers","name":"\ud83d\udd35 \u50b3\u7d71\u7269\u7406 (\u516b\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzM\u002fM\u002fmpmZmZmZKEAzMzMzMzNUQM3MzMzMzFVAZmZmZmbGVkCamZmZmRlRQJqZmZmZ2UxAmpmZmZmZKUCamZmZmZkNQDMzMzMzMxNAMzMzMzMzE0AzMzMzMzMTQM3MzMzMzDZAZmZmZmbmO0AzMzMzMzMvQJqZmZmZmS1AZmZmZmZmQ0DNzMzMzIxGQAAAAAAAADxAAAAAAACAOECamZmZmRk2QDMzMzMzszhAZmZmZmZmK0BmZmZmZmYpQJqZmZmZmTFAmpmZmZmZMUAAAAAAAAAkQAAAAAAAAB5AMzMzMzMzJkAAAAAAAAAeQGZmZmZmZiZAZmZmZmZmGEAAAAAAAAAhQGZmZmZmZhhAMzMzMzMzHUA="},"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"mpmZmZmZAUAAAAAAAAD4P83MzMzMzABAMzMzMzMzFUAAAAAAAAAWQGZmZmZmZhpAMzMzMzMzLUBmZmZmZmZAQM3MzMzMDEFAMzMzMzOzPUCamZmZmRk5QAAAAAAAgDBAZmZmZmZmK0AAAAAAAAAhQAAAAAAAAB5AAAAAAAAAKUAAAAAAAAAnQDMzMzMzszJAZmZmZmZmL0AAAAAAAAAoQGZmZmZmZilAAAAAAAAAKEAzMzMzMzMoQDMzMzMzMyhAzczMzMzMKUDNzMzMzMwnQDMzMzMzMyhAZmZmZmZmLkDNzMzMzMwvQGZmZmZm5jBAZmZmZmZmLUCamZmZmZkvQAAAAAAAAC5AMzMzMzMzKkDNzMzMzMwsQDMzMzMzMy9AZmZmZmZmLkDNzMzMzMwtQDMzMzMzMytAzczMzMzMKUA="},"hovertemplate":"%{y}%\u003cbr\u003e\u6a21\u578b\u5206\u6b67\u5ea6: %{customdata} km\u002fh","line":{"color":"red","dash":"solid","width":3},"mode":"lines+markers","name":"\ud83d\udd34 AI \u6c7a\u7b56\u6a39 (\u516b\u865f)","x":["07\u670824\u65e5 08:00","07\u670824\u65e5 14:00","07\u670824\u65e5 20:00","07\u670825\u65e5 02:00","07\u670825\u65e5 08:00","07\u670825\u65e5 14:00","07\u670825\u65e5 20:00","07\u670826\u65e5 02:00","07\u670826\u65e5 08:00","07\u670826\u65e5 14:00","07\u670826\u65e5 20:00","07\u670827\u65e5 02:00","07\u670827\u65e5 08:00","07\u670827\u65e5 14:00","07\u670827\u65e5 20:00","07\u670828\u65e5 02:00","07\u670828\u65e5 08:00","07\u670828\u65e5 14:00","07\u670828\u65e5 20:00","07\u670829\u65e5 02:00","07\u670829\u65e5 08:00","07\u670829\u65e5 14:00","07\u670829\u65e5 20:00","07\u670830\u65e5 02:00","07\u670830\u65e5 08:00","07\u670830\u65e5 14:00","07\u670830\u65e5 20:00","07\u670831\u65e5 02:00","07\u670831\u65e5 08:00","07\u670831\u65e5 14:00","07\u670831\u65e5 20:00","08\u670801\u65e5 02:00","08\u670801\u65e5 08:00","08\u670801\u65e5 14:00","08\u670801\u65e5 20:00","08\u670802\u65e5 02:00","08\u670802\u65e5 08:00","08\u670802\u65e5 14:00","08\u670802\u65e5 20:00","08\u670803\u65e5 02:00"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMxNAMzMzMzOzM0AAAAAAACBVQM3MzMzMzFZAmpmZmZn5UUAzMzMzM3NBQJqZmZmZmSJAzczMzMzM9D8AAAAAAAAAADMzMzMzM\u002fM\u002fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzczMzMzM9D\u002fNzMzMzMz0P83MzMzMzPQ\u002fAAAAAAAAAACamZmZmZkFQAAAAAAAAAAAAAAAAAAAEEAAAAAAAAAQQJqZmZmZmShAAAAAAAAAJEBmZmZmZmYeQM3MzMzMzCNAmpmZmZmZE0AzMzMzMzMPQAAAAAAAAARAzczMzMzMDEAzMzMzMzPzPzMzMzMzMwNAMzMzMzMzA0AzMzMzMzMDQJqZmZmZmQVAzczMzMzM9D8="},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#f2f5fa"},"error_y":{"color":"#f2f5fa"},"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"baxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"line":{"color":"#283442"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"marker":{"line":{"color":"#283442"}},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#506784"},"line":{"color":"rgb(17,17,17)"}},"header":{"fill":{"color":"#2a3f5f"},"line":{"color":"rgb(17,17,17)"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#f2f5fa","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#f2f5fa"},"geo":{"bgcolor":"rgb(17,17,17)","lakecolor":"rgb(17,17,17)","landcolor":"rgb(17,17,17)","showlakes":true,"showland":true,"subunitcolor":"#506784"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"dark"},"paper_bgcolor":"rgb(17,17,17)","plot_bgcolor":"rgb(17,17,17)","polar":{"angularaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","radialaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"yaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"zaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"}},"shapedefaults":{"line":{"color":"#f2f5fa"}},"sliderdefaults":{"bgcolor":"#C8D4E3","bordercolor":"rgb(17,17,17)","borderwidth":1,"tickwidth":0},"ternary":{"aaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"baxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","caxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"title":{"x":0.05},"updatemenudefaults":{"bgcolor":"#506784","borderwidth":0},"xaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2}}},"yaxis":{"range":[0,100]},"title":{"text":"\ud83c\udf00 \u9999\u6e2f\u98a8\u66b4\u4fe1\u865f\u9810\u6e2c"},"paper_bgcolor":"#1e1e1e","plot_bgcolor":"#1e1e1e"},                        {"responsive": true}                    )                };            </script>        </div></div>
         <div id="typhoon-map"></div>
-        
-        <div class="table-container">
-            <h3>📋 四維綜合預測數據表</h3>
+        <div style="overflow-x: auto; background: #1c2541; padding: 15px; border-radius: 8px; margin-top: 20px;">
             <table class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -106,8 +83,8 @@
     </tr>
     <tr>
       <td>07月25日 14:00</td>
-      <td>44.4</td>
-      <td>15.6</td>
+      <td>45.6</td>
+      <td>1.2</td>
       <td>68.3</td>
       <td>4.8</td>
       <td>6.6</td>
@@ -115,7 +92,7 @@
     <tr>
       <td>07月25日 20:00</td>
       <td>47.2</td>
-      <td>23.3</td>
+      <td>12.3</td>
       <td>85.9</td>
       <td>19.7</td>
       <td>14.6</td>
@@ -123,78 +100,78 @@
     <tr>
       <td>07月26日 02:00</td>
       <td>92.1</td>
-      <td>87.2</td>
+      <td>80.8</td>
       <td>98.7</td>
       <td>84.5</td>
       <td>32.8</td>
     </tr>
     <tr>
       <td>07月26日 08:00</td>
-      <td>96.4</td>
-      <td>98.8</td>
+      <td>100.0</td>
+      <td>87.2</td>
       <td>95.1</td>
       <td>91.2</td>
       <td>34.1</td>
     </tr>
     <tr>
       <td>07月26日 14:00</td>
-      <td>83.1</td>
-      <td>94.9</td>
+      <td>98.8</td>
+      <td>91.1</td>
       <td>73.2</td>
       <td>71.9</td>
       <td>29.7</td>
     </tr>
     <tr>
       <td>07月26日 20:00</td>
-      <td>42.4</td>
-      <td>78.5</td>
+      <td>91.1</td>
+      <td>68.4</td>
       <td>40.0</td>
       <td>34.9</td>
       <td>25.1</td>
     </tr>
     <tr>
       <td>07月27日 02:00</td>
-      <td>14.5</td>
-      <td>70.1</td>
+      <td>94.8</td>
+      <td>57.7</td>
       <td>9.3</td>
       <td>9.3</td>
       <td>16.5</td>
     </tr>
     <tr>
       <td>07月27日 08:00</td>
-      <td>1.3</td>
-      <td>21.9</td>
+      <td>50.3</td>
+      <td>12.8</td>
       <td>1.3</td>
       <td>1.3</td>
       <td>13.7</td>
     </tr>
     <tr>
       <td>07月27日 14:00</td>
-      <td>0.0</td>
-      <td>9.7</td>
+      <td>40.3</td>
+      <td>3.7</td>
       <td>0.0</td>
       <td>0.0</td>
       <td>8.5</td>
     </tr>
     <tr>
       <td>07月27日 20:00</td>
-      <td>1.2</td>
-      <td>9.6</td>
+      <td>52.5</td>
+      <td>4.8</td>
       <td>1.2</td>
       <td>1.2</td>
       <td>7.5</td>
     </tr>
     <tr>
       <td>07月28日 02:00</td>
-      <td>0.0</td>
-      <td>8.7</td>
+      <td>40.3</td>
+      <td>4.8</td>
       <td>1.2</td>
       <td>0.0</td>
       <td>12.5</td>
     </tr>
     <tr>
       <td>07月28日 08:00</td>
-      <td>0.0</td>
+      <td>29.7</td>
       <td>4.8</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -202,184 +179,184 @@
     </tr>
     <tr>
       <td>07月28日 14:00</td>
-      <td>1.3</td>
-      <td>26.7</td>
+      <td>65.2</td>
+      <td>22.8</td>
       <td>1.3</td>
       <td>0.0</td>
       <td>18.7</td>
     </tr>
     <tr>
       <td>07月28日 20:00</td>
-      <td>1.3</td>
-      <td>31.9</td>
+      <td>79.3</td>
+      <td>27.9</td>
       <td>1.3</td>
       <td>1.3</td>
       <td>15.7</td>
     </tr>
     <tr>
       <td>07月29日 02:00</td>
-      <td>1.3</td>
-      <td>20.9</td>
+      <td>60.4</td>
+      <td>15.6</td>
       <td>1.3</td>
       <td>1.3</td>
       <td>12.0</td>
     </tr>
     <tr>
       <td>07月29日 08:00</td>
-      <td>1.3</td>
-      <td>16.1</td>
+      <td>56.1</td>
+      <td>14.8</td>
       <td>1.3</td>
       <td>1.3</td>
       <td>12.7</td>
     </tr>
     <tr>
       <td>07月29日 14:00</td>
-      <td>5.2</td>
-      <td>46.4</td>
+      <td>81.6</td>
+      <td>38.8</td>
       <td>1.3</td>
       <td>0.0</td>
       <td>12.0</td>
     </tr>
     <tr>
       <td>07月29日 20:00</td>
-      <td>5.3</td>
-      <td>49.1</td>
+      <td>88.3</td>
+      <td>45.1</td>
       <td>5.3</td>
       <td>2.7</td>
       <td>12.1</td>
     </tr>
     <tr>
       <td>07月30日 02:00</td>
-      <td>5.3</td>
-      <td>37.1</td>
+      <td>72.9</td>
+      <td>28.0</td>
       <td>4.0</td>
       <td>0.0</td>
       <td>12.1</td>
     </tr>
     <tr>
       <td>07月30日 08:00</td>
-      <td>12.0</td>
-      <td>28.5</td>
+      <td>69.7</td>
+      <td>24.5</td>
       <td>12.0</td>
       <td>4.0</td>
       <td>12.9</td>
     </tr>
     <tr>
       <td>07月30日 14:00</td>
-      <td>12.0</td>
-      <td>28.8</td>
+      <td>78.1</td>
+      <td>22.1</td>
       <td>9.3</td>
       <td>4.0</td>
       <td>11.9</td>
     </tr>
     <tr>
       <td>07月30日 20:00</td>
-      <td>12.8</td>
-      <td>29.9</td>
+      <td>71.7</td>
+      <td>24.7</td>
       <td>22.3</td>
       <td>12.3</td>
       <td>12.1</td>
     </tr>
     <tr>
       <td>07月31日 02:00</td>
-      <td>16.7</td>
-      <td>19.1</td>
+      <td>48.8</td>
+      <td>13.7</td>
       <td>23.5</td>
       <td>10.0</td>
       <td>15.2</td>
     </tr>
     <tr>
       <td>07月31日 08:00</td>
-      <td>6.5</td>
-      <td>14.0</td>
+      <td>31.3</td>
+      <td>12.7</td>
       <td>27.2</td>
       <td>7.6</td>
       <td>15.9</td>
     </tr>
     <tr>
       <td>07月31日 14:00</td>
+      <td>50.8</td>
       <td>17.6</td>
-      <td>18.9</td>
       <td>33.1</td>
       <td>9.9</td>
       <td>16.9</td>
     </tr>
     <tr>
       <td>07月31日 20:00</td>
-      <td>11.3</td>
-      <td>18.8</td>
+      <td>47.3</td>
+      <td>17.6</td>
       <td>27.2</td>
       <td>4.9</td>
       <td>14.7</td>
     </tr>
     <tr>
       <td>08月01日 02:00</td>
-      <td>12.5</td>
-      <td>14.0</td>
+      <td>34.1</td>
+      <td>10.0</td>
       <td>26.4</td>
       <td>3.9</td>
       <td>15.8</td>
     </tr>
     <tr>
       <td>08月01日 08:00</td>
-      <td>4.9</td>
-      <td>11.2</td>
+      <td>27.2</td>
+      <td>7.5</td>
       <td>16.4</td>
       <td>2.5</td>
       <td>15.0</td>
     </tr>
     <tr>
       <td>08月01日 14:00</td>
-      <td>8.5</td>
-      <td>12.3</td>
+      <td>41.5</td>
+      <td>11.1</td>
       <td>20.3</td>
       <td>3.6</td>
       <td>13.1</td>
     </tr>
     <tr>
       <td>08月01日 20:00</td>
-      <td>8.8</td>
-      <td>9.9</td>
+      <td>40.7</td>
+      <td>7.5</td>
       <td>18.0</td>
       <td>1.2</td>
       <td>14.4</td>
     </tr>
     <tr>
       <td>08月02日 02:00</td>
-      <td>3.7</td>
-      <td>12.4</td>
+      <td>26.3</td>
+      <td>11.2</td>
       <td>8.8</td>
       <td>2.4</td>
       <td>15.6</td>
     </tr>
     <tr>
       <td>08月02日 08:00</td>
-      <td>7.6</td>
-      <td>8.7</td>
+      <td>24.9</td>
+      <td>6.1</td>
       <td>14.0</td>
       <td>2.4</td>
       <td>15.2</td>
     </tr>
     <tr>
       <td>08月02日 14:00</td>
-      <td>6.4</td>
-      <td>13.5</td>
+      <td>31.9</td>
+      <td>8.5</td>
       <td>16.4</td>
       <td>2.4</td>
       <td>14.9</td>
     </tr>
     <tr>
       <td>08月02日 20:00</td>
-      <td>6.5</td>
-      <td>11.2</td>
+      <td>32.1</td>
+      <td>6.1</td>
       <td>10.4</td>
       <td>2.7</td>
       <td>13.6</td>
     </tr>
     <tr>
       <td>08月03日 02:00</td>
-      <td>5.3</td>
-      <td>10.0</td>
+      <td>27.5</td>
+      <td>7.3</td>
       <td>11.6</td>
       <td>1.3</td>
       <td>12.9</td>
@@ -392,78 +369,45 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         const map = L.map('typhoon-map').setView([20.0, 116.5], 6);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 12, minZoom: 4 }).addTo(map);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 12, minZoom: 4, attribution: '&copy; OpenStreetMap & CartoDB'
-        }).addTo(map);
-
-        // 香港觀察點
         const hkCoords = [22.3193, 114.1694];
-        L.circleMarker(hkCoords, { radius: 7, color: '#00f2fe', fillColor: '#4facfe', fillOpacity: 1 }).addTo(map)
-         .bindPopup('<b>香港 (Hong Kong)</b><br>預警觀察中心');
-
-        // 香港距離警戒圈 (200km, 400km, 600km)
-        const rings = [
-            { r: 200000, c: '#ef4444', label: '200km 核心警戒圈' },
-            { r: 400000, c: '#f97316', label: '400km 近海警戒圈' },
-            { r: 600000, c: '#eab308', label: '600km 外圍觀察圈' }
-        ];
-        rings.forEach(ring => {
-            L.circle(hkCoords, {
-                radius: ring.r, color: ring.c, weight: 1.2, dashArray: '6, 8', fill: false, opacity: 0.6
-            }).bindTooltip(ring.label).addTo(map);
+        L.circleMarker(hkCoords, { radius: 7, color: '#00f2fe', fillColor: '#4facfe', fillOpacity: 1 }).addTo(map).bindPopup('<b>香港 (Hong Kong)</b>');
+        
+        // 警戒圈
+        [200000, 400000, 600000].forEach((r, idx) => {
+            L.circle(hkCoords, { radius: r, color: ['#ef4444', '#f97316', '#eab308'][idx], weight: 1.2, dashArray: '6, 8', fill: false, opacity: 0.6 }).addTo(map);
         });
 
-        // 載入 GeoJSON 數據
-        const geojsonData = {"type": "FeatureCollection", "features": []};
-
+        const geojsonData = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"model": "預測軌跡連線", "color": "#00f2fe", "type": "track_line"}, "geometry": {"type": "LineString", "coordinates": [[113.62, 17.0], [114.69, 17.19], [117.17, 17.83], [119.0, 19.0], [119.0, 19.5], [119.0, 20.0], [119.0, 20.0], [118.5, 20.0], [118.0, 21.0], [117.0, 21.0], [117.0, 21.0], [116.0, 22.0], [116.0, 22.0], [115.0, 22.0], [115.0, 22.0], [115.0, 23.0], [114.0, 23.0], [114.0, 23.0], [114.0, 23.5], [113.0, 24.0], [113.0, 24.0], [112.5, 24.0], [112.5, 24.0], [112.0, 24.0], [111.5, 23.12], [110.6, 22.8], [110.61, 22.43], [110.25, 22.25], [110.0, 23.0]]}}, {"type": "Feature", "properties": {"time": "07-24 08:00", "model": "ECMWF 質心追蹤", "wind_speed": "29 km/h", "pressure": "1005.1 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "594 km", "position": "17.0°N, 113.62°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [113.62, 17.0]}}, {"type": "Feature", "properties": {"time": "07-24 11:00", "model": "ECMWF 質心追蹤", "wind_speed": "34 km/h", "pressure": "1005.4 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "573 km", "position": "17.19°N, 114.69°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [114.69, 17.19]}}, {"type": "Feature", "properties": {"time": "07-24 14:00", "model": "ECMWF 質心追蹤", "wind_speed": "41 km/h", "pressure": "1003.5 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "589 km", "position": "17.83°N, 117.17°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [117.17, 17.83]}}, {"type": "Feature", "properties": {"time": "07-24 17:00", "model": "ECMWF 質心追蹤", "wind_speed": "49 km/h", "pressure": "1001.7 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "623 km", "position": "19.0°N, 119.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [119.0, 19.0]}}, {"type": "Feature", "properties": {"time": "07-24 20:00", "model": "ECMWF 質心追蹤", "wind_speed": "52 km/h", "pressure": "1001.4 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "592 km", "position": "19.5°N, 119.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [119.0, 19.5]}}, {"type": "Feature", "properties": {"time": "07-24 23:00", "model": "ECMWF 質心追蹤", "wind_speed": "58 km/h", "pressure": "997.7 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "563 km", "position": "20.0°N, 119.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [119.0, 20.0]}}, {"type": "Feature", "properties": {"time": "07-25 02:00", "model": "ECMWF 質心追蹤", "wind_speed": "45 km/h", "pressure": "982.5 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "563 km", "position": "20.0°N, 119.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [119.0, 20.0]}}, {"type": "Feature", "properties": {"time": "07-25 05:00", "model": "ECMWF 質心追蹤", "wind_speed": "89 km/h", "pressure": "991.7 hPa", "category": "颱風", "color": "#f97316", "dist_hk": "518 km", "position": "20.0°N, 118.5°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [118.5, 20.0]}}, {"type": "Feature", "properties": {"time": "07-25 08:00", "model": "ECMWF 質心追蹤", "wind_speed": "85 km/h", "pressure": "985.4 hPa", "category": "強烈熱帶風暴", "color": "#eab308", "dist_hk": "422 km", "position": "21.0°N, 118.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [118.0, 21.0]}}, {"type": "Feature", "properties": {"time": "07-25 11:00", "model": "ECMWF 質心追蹤", "wind_speed": "73 km/h", "pressure": "986.9 hPa", "category": "強烈熱帶風暴", "color": "#eab308", "dist_hk": "327 km", "position": "21.0°N, 117.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [117.0, 21.0]}}, {"type": "Feature", "properties": {"time": "07-25 14:00", "model": "ECMWF 質心追蹤", "wind_speed": "76 km/h", "pressure": "985.0 hPa", "category": "強烈熱帶風暴", "color": "#eab308", "dist_hk": "327 km", "position": "21.0°N, 117.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [117.0, 21.0]}}, {"type": "Feature", "properties": {"time": "07-25 17:00", "model": "ECMWF 質心追蹤", "wind_speed": "80 km/h", "pressure": "985.5 hPa", "category": "強烈熱帶風暴", "color": "#eab308", "dist_hk": "192 km", "position": "22.0°N, 116.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [116.0, 22.0]}}, {"type": "Feature", "properties": {"time": "07-25 20:00", "model": "ECMWF 質心追蹤", "wind_speed": "97 km/h", "pressure": "973.8 hPa", "category": "颱風", "color": "#f97316", "dist_hk": "192 km", "position": "22.0°N, 116.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [116.0, 22.0]}}, {"type": "Feature", "properties": {"time": "07-25 23:00", "model": "ECMWF 質心追蹤", "wind_speed": "105 km/h", "pressure": "983.0 hPa", "category": "颱風", "color": "#f97316", "dist_hk": "93 km", "position": "22.0°N, 115.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [115.0, 22.0]}}, {"type": "Feature", "properties": {"time": "07-26 02:00", "model": "ECMWF 質心追蹤", "wind_speed": "95 km/h", "pressure": "983.2 hPa", "category": "颱風", "color": "#f97316", "dist_hk": "93 km", "position": "22.0°N, 115.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [115.0, 22.0]}}, {"type": "Feature", "properties": {"time": "07-26 05:00", "model": "ECMWF 質心追蹤", "wind_speed": "43 km/h", "pressure": "982.5 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "114 km", "position": "23.0°N, 115.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [115.0, 23.0]}}, {"type": "Feature", "properties": {"time": "07-26 08:00", "model": "ECMWF 質心追蹤", "wind_speed": "46 km/h", "pressure": "982.1 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "78 km", "position": "23.0°N, 114.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [114.0, 23.0]}}, {"type": "Feature", "properties": {"time": "07-26 11:00", "model": "ECMWF 質心追蹤", "wind_speed": "35 km/h", "pressure": "984.4 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "78 km", "position": "23.0°N, 114.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [114.0, 23.0]}}, {"type": "Feature", "properties": {"time": "07-26 14:00", "model": "ECMWF 質心追蹤", "wind_speed": "43 km/h", "pressure": "990.7 hPa", "category": "熱帶風暴", "color": "#06b6d4", "dist_hk": "132 km", "position": "23.5°N, 114.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [114.0, 23.5]}}, {"type": "Feature", "properties": {"time": "07-26 17:00", "model": "ECMWF 質心追蹤", "wind_speed": "26 km/h", "pressure": "989.9 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "222 km", "position": "24.0°N, 113.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [113.0, 24.0]}}, {"type": "Feature", "properties": {"time": "07-26 20:00", "model": "ECMWF 質心追蹤", "wind_speed": "20 km/h", "pressure": "990.7 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "222 km", "position": "24.0°N, 113.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [113.0, 24.0]}}, {"type": "Feature", "properties": {"time": "07-26 23:00", "model": "ECMWF 質心追蹤", "wind_speed": "24 km/h", "pressure": "996.3 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "253 km", "position": "24.0°N, 112.5°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [112.5, 24.0]}}, {"type": "Feature", "properties": {"time": "07-27 02:00", "model": "ECMWF 質心追蹤", "wind_speed": "28 km/h", "pressure": "997.8 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "253 km", "position": "24.0°N, 112.5°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [112.5, 24.0]}}, {"type": "Feature", "properties": {"time": "07-27 05:00", "model": "ECMWF 質心追蹤", "wind_speed": "24 km/h", "pressure": "999.6 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "290 km", "position": "24.0°N, 112.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [112.0, 24.0]}}, {"type": "Feature", "properties": {"time": "07-27 08:00", "model": "ECMWF 質心追蹤", "wind_speed": "20 km/h", "pressure": "1002.3 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "288 km", "position": "23.12°N, 111.5°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [111.5, 23.12]}}, {"type": "Feature", "properties": {"time": "07-27 11:00", "model": "ECMWF 質心追蹤", "wind_speed": "11 km/h", "pressure": "1002.7 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "370 km", "position": "22.8°N, 110.6°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [110.6, 22.8]}}, {"type": "Feature", "properties": {"time": "07-27 14:00", "model": "ECMWF 質心追蹤", "wind_speed": "11 km/h", "pressure": "1001.0 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "366 km", "position": "22.43°N, 110.61°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [110.61, 22.43]}}, {"type": "Feature", "properties": {"time": "07-27 17:00", "model": "ECMWF 質心追蹤", "wind_speed": "10 km/h", "pressure": "999.4 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "403 km", "position": "22.25°N, 110.25°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [110.25, 22.25]}}, {"type": "Feature", "properties": {"time": "07-27 20:00", "model": "ECMWF 質心追蹤", "wind_speed": "6 km/h", "pressure": "1001.3 hPa", "category": "熱帶低氣壓", "color": "#3b82f6", "dist_hk": "434 km", "position": "23.0°N, 110.0°E", "type": "track_point"}, "geometry": {"type": "Point", "coordinates": [110.0, 23.0]}}]};
         if (geojsonData.features.length > 0) {
             L.geoJSON(geojsonData, {
-                style: function(feature) {
-                    if (feature.properties.type === "track_line") {
-                        return { color: feature.properties.color, weight: 3, opacity: 0.85, dashArray: '4, 4' };
+                style: function(f) {
+                    if (f.properties.type === "track_line") return { color: f.properties.color, weight: 3.5, opacity: 0.9, dashArray: '6, 6' };
+                },
+                pointToLayer: function(f, latlng) {
+                    if (f.properties.type === "track_point") {
+                        return L.circleMarker(latlng, { radius: 5.5, fillColor: f.properties.color, color: '#000', weight: 1, opacity: 1, fillOpacity: 1 });
                     }
                 },
-                pointToLayer: function(feature, latlng) {
-                    return L.circleMarker(latlng, {
-                        radius: 6,
-                        fillColor: feature.properties.color || '#ffffff',
-                        color: '#000000',
-                        weight: 1,
-                        opacity: 1,
-                        fillOpacity: 0.95
-                    });
-                },
-                onEachFeature: function(feature, layer) {
-                    if (feature.geometry.type === "Point") {
-                        const p = feature.properties;
+                onEachFeature: function(f, layer) {
+                    if (f.geometry.type === "Point") {
+                        const p = f.properties;
                         layer.bindPopup(
                             '<div style="font-size:13px; line-height:1.5;">' +
                             '<b style="color:' + p.color + ';">' + p.category + ' (' + p.wind_speed + ')</b><br>' +
-                            '<b>時間：</b>' + p.time + '<br>' +
-                            '<b>中心氣壓：</b>' + p.pressure + '<br>' +
-                            '<b>距港距離：</b>' + p.dist_hk + '<br>' +
-                            '<b>座標位置：</b>' + p.position +
-                            '</div>'
+                            '<b>時間：</b>' + p.time + '<br><b>氣壓：</b>' + p.pressure + '<br>' +
+                            '<b>距港：</b>' + p.dist_hk + '<br><b>位置：</b>' + p.position + '</div>'
                         );
                     }
                 }
             }).addTo(map);
         }
 
-        // 圖例
         const legend = L.control({ position: 'topright' });
         legend.onAdd = function () {
             const div = L.DomUtil.create('div', 'tc-legend');
-            div.innerHTML = `
-                <b>🌀 熱帶氣旋等級 (標準)</b><br>
-                <span class="legend-badge" style="background:#3b82f6;"></span>熱帶低氣壓 (&lt;41 km/h)<br>
-                <span class="legend-badge" style="background:#06b6d4;"></span>熱帶風暴 (41-62 km/h)<br>
-                <span class="legend-badge" style="background:#eab308;"></span>強烈熱帶風暴 (63-87 km/h)<br>
-                <span class="legend-badge" style="background:#f97316;"></span>颱風 (88-117 km/h)<br>
-                <span class="legend-badge" style="background:#ef4444;"></span>強颱風 (118-149 km/h)<br>
-                <span class="legend-badge" style="background:#a855f7;"></span>超強颱風 (&ge;150 km/h)
-            `;
+            div.innerHTML = `<b>🌀 氣旋等級</b><br><span class="legend-badge" style="background:#3b82f6;"></span>熱帶低氣壓<br><span class="legend-badge" style="background:#06b6d4;"></span>熱帶風暴<br><span class="legend-badge" style="background:#eab308;"></span>強烈熱帶風暴<br><span class="legend-badge" style="background:#f97316;"></span>颱風<br><span class="legend-badge" style="background:#ef4444;"></span>強颱風<br><span class="legend-badge" style="background:#a855f7;"></span>超強颱風`;
             return div;
         };
         legend.addTo(map);
