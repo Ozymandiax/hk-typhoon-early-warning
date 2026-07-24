@@ -57,15 +57,14 @@ def generate_report():
         ]
     }
 
-    # 2. 確保 data 資料夾存在，並輸出 GeoJSON
+    # 2. 確保 data 資料夾存在並輸出 GeoJSON
     os.makedirs("data", exist_ok=True)
     with open("data/ai_paths.geojson", "w", encoding="utf-8") as f:
         json.dump(ai_paths_data, f, ensure_ascii=False, indent=2)
 
-    # 轉成 JSON 字串供 HTML 內聯備用
     geojson_json_str = json.dumps(ai_paths_data, ensure_ascii=False)
 
-    # 3. 構建包含 Dashboard 數據與 Leaflet 互動地圖嘅 index.html
+    # 3. 構建 HTML (包含 Dashboard 數據與 Leaflet 作戰地圖)
     html_content = f"""<!DOCTYPE html>
 <html lang="zh-HK">
 <head>
@@ -122,7 +121,7 @@ def generate_report():
 </head>
 <body>
     <div class="container">
-        <h2>🌀 香港潛在風暴雙軌早期預警系統</h2>
+        <h2>🌀 香港潛在風暴雙軌早期預警系統 (Hugging Face Space)</h2>
         
         <div class="card">
             <h3>📊 懸掛八號風球機率預測 (AI 決策樹 + 物理雙軌)</h3>
@@ -142,16 +141,13 @@ def generate_report():
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. 初始化 Leaflet 地圖，聚焦華南/南海東北部
         const map = L.map('map').setView([21.2, 115.0], 7);
 
-        // 2. 載入暗黑極客風底圖
         L.tileLayer('https://{{s}}.basemaps.cartocdn.com/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
             maxZoom: 12, minZoom: 5,
             attribution: '&copy; OpenStreetMap & CartoDB'
         }}).addTo(map);
 
-        // 3. 香港 3 重距離警戒圈 (50km / 100km / 200km)
         const hkCoords = [22.3193, 114.1694];
         const rings = [
             {{ r: 200000, c: '#eab308', label: '200km 外圍烈風圈' }},
@@ -161,35 +157,24 @@ def generate_report():
 
         rings.forEach(ring => {{
             L.circle(hkCoords, {{
-                color: ring.c,
-                fillColor: ring.c,
-                fillOpacity: 0.08,
-                weight: 1.5,
-                dashArray: '4, 6'
+                color: ring.c, fillColor: ring.c, fillOpacity: 0.08, weight: 1.5, dashArray: '4, 6'
             }}).bindTooltip(ring.label).addTo(map);
         }});
 
-        // 香港中心點標記
         L.circleMarker(hkCoords, {{ radius: 6, color: '#3b82f6', fillColor: '#60a5fa', fillOpacity: 1 }}).addTo(map)
          .bindPopup('<b>香港 (Hong Kong)</b><br>預警系統定位點');
 
-        // 4. 內聯加載 GeoJSON 路徑數據
         const geojsonData = {geojson_json_str};
 
         L.geoJSON(geojsonData, {{
             style: function(feature) {{
-                return {{
-                    color: feature.properties.color,
-                    weight: 3.5,
-                    opacity: 0.85
-                }};
+                return {{ color: feature.properties.color, weight: 3.5, opacity: 0.85 }};
             }},
             onEachFeature: function(feature, layer) {{
                 layer.bindPopup('<b>預測模式：' + feature.properties.model + '</b>');
             }}
         }}).addTo(map);
 
-        // 5. 地圖圖例 (Legend)
         const legend = L.control({{ position: 'bottomright' }});
         legend.onAdd = function () {{
             const div = L.DomUtil.create('div', 'map-legend');
