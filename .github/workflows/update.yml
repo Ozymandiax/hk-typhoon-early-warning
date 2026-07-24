@@ -45,7 +45,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           # ⚠️ 記得喺下面改返你嘅 Hugging Face 用戶名同 Space 名稱！
-          HF_USERNAME: Ozymand1az
-          HF_SPACE_NAME: hk-typhoon-early-warning
+          HF_USERNAME: "Ozymand1az"
+          HF_SPACE_NAME: "hk-typhoon-early-warning"
         run: |
           git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning
