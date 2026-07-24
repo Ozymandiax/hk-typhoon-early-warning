@@ -20,12 +20,12 @@ print("🤖 正在初始化輕量級 AI 決策樹模型...")
 X_train = [
     [1010, 0.0,  0.0, 25], [1008, 1.5,  0.5, 30], [1006, 2.0,  0.8, 35],  # 0: 日常陣風
     [1008, -1.0,-0.5, 20], [1005, 0.5,  0.2, 35],                       # 0: 氣壓反彈
-    [1006, 1.0,  1.5, 42],                                              # 🌟 0: 新增降噪樣本
-    [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],  # 1: T1 警戒
+    [1006, 1.0,  1.5, 42],                                              # 🌟 0: 新增降噪樣本 (夏季雷雨/熱低壓)
+    [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],  # 1: T1 警戒 (必須伴隨穩定氣壓跌幅)
     [1000, 5.0,  2.0, 48], [999,  6.0,  2.5, 50], [1003, 4.0,  1.8, 46],  # 3: T3 強風
     [1004, 5.0,  2.2, 52], [1001, 7.0,  3.0, 55],                       # 8: T8 邊緣直擊
     [1002, 4.5,  2.5, 50],                                              # 8: 西登擦邊威脅
-    [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]                        # 8: T8 烈風
+    [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]                        # 8: T8 烈風 (純外圍強陣風)
 ]
 y_train = [0, 0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8, 8, 8]
 
@@ -37,9 +37,10 @@ print("✨ 終極四維 AI 決策樹訓練完成！")
 # ⚡ 數據獲取 (Open-Meteo API)
 # ==========================================
 print("⚡ 正在向 Open-Meteo 請求數據...")
+# ⚠️ 注意: 已修正 ECMWF API 參數為 ecmwf_ifs04
 url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs04&forecast_days=10"
 url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
-url_dir = "https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs025&forecast_days=10"
+url_dir = "https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs04&forecast_days=10"
 
 try:
     res_ec = requests.get(url_ecmwf, timeout=15).json()
@@ -126,17 +127,25 @@ for idx, t_str in enumerate(times):
     ec_winds_adj = ec_winds * multiplier
     gfs_winds_adj = gfs_winds * multiplier
 
-    # 傳統物理門檻判定
+    # ------------------------------------------
+    # 軌道 1：傳統物理門檻判定 (防護版)
+    # ------------------------------------------
     ec_t1_phy = (ec_press <= 1005) & (ec_winds_adj >= 38) & (ec_press_drop_24h >= 1.5)
     gfs_t1_phy = (gfs_press <= 1005) & (gfs_winds_adj >= 38) & (gfs_press_drop_24h >= 1.5)
     
     ec_t8_phy = ((ec_press <= 1005) & (ec_winds_adj >= 48)) | (ec_winds_adj >= 55) | ((ec_press_drop_3h >= 2.0) & (ec_winds_adj >= 45))
     gfs_t8_phy = ((gfs_press <= 1005) & (gfs_winds_adj >= 48)) | (gfs_winds_adj >= 55) | ((gfs_press_drop_3h >= 2.0) & (gfs_winds_adj >= 45))
     
-    prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
-    prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
+    # 🛡️ 終極防護：防止除以零 (ZeroDivision) 導致 NaN
+    len_ec = len(ec_press) if len(ec_press) > 0 else 1
+    len_gfs = len(gfs_press) if len(gfs_press) > 0 else 1
+    
+    prob_t1_phy = round(((np.sum(ec_t1_phy)/len_ec*100)*0.6) + ((np.sum(gfs_t1_phy)/len_gfs*100)*0.4), 1)
+    prob_t8_phy = round(((np.sum(ec_t8_phy)/len_ec*100)*0.6) + ((np.sum(gfs_t8_phy)/len_gfs*100)*0.4), 1)
 
-    # 🤖 四維 AI 決策樹判定
+    # ------------------------------------------
+    # 軌道 2：🤖 四維 AI 決策樹判定 (防護版)
+    # ------------------------------------------
     ec_ai_preds = []
     for m in range(len(ec_press)):
         feat = [[ec_press[m], ec_press_drop_24h[m], ec_press_drop_3h[m], ec_winds_adj[m]]]
@@ -150,10 +159,12 @@ for idx, t_str in enumerate(times):
     ec_ai_preds = np.array(ec_ai_preds)
     gfs_ai_preds = np.array(gfs_ai_preds)
     
-    prob_t1_ec_ai = np.sum(ec_ai_preds >= 1) / len(ec_ai_preds) * 100
-    prob_t8_ec_ai = np.sum(ec_ai_preds == 8) / len(ec_ai_preds) * 100
-    prob_t1_gfs_ai = np.sum(gfs_ai_preds >= 1) / len(gfs_ai_preds) * 100
-    prob_t8_gfs_ai = np.sum(gfs_ai_preds == 8) / len(gfs_ai_preds) * 100
+    # 🛡️ 終極防護：確保有數據才計算機率，否則當 0%
+    prob_t1_ec_ai = (np.sum(ec_ai_preds >= 1) / len(ec_ai_preds) * 100) if len(ec_ai_preds) > 0 else 0.0
+    prob_t8_ec_ai = (np.sum(ec_ai_preds == 8) / len(ec_ai_preds) * 100) if len(ec_ai_preds) > 0 else 0.0
+    
+    prob_t1_gfs_ai = (np.sum(gfs_ai_preds >= 1) / len(gfs_ai_preds) * 100) if len(gfs_ai_preds) > 0 else 0.0
+    prob_t8_gfs_ai = (np.sum(gfs_ai_preds == 8) / len(gfs_ai_preds) * 100) if len(gfs_ai_preds) > 0 else 0.0
     
     prob_t1_ai = round((prob_t1_ec_ai * 0.6) + (prob_t1_gfs_ai * 0.4), 1)
     prob_t8_ai = round((prob_t8_ec_ai * 0.6) + (prob_t8_gfs_ai * 0.4), 1)
@@ -175,7 +186,15 @@ df_res = pd.DataFrame(results)
 df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 
 # ==========================================
-# 🧠 AI 自動生成綜合結論
+# 📊 匯出 Excel 預測報告
+# ==========================================
+print("📊 正在將預測結果匯出至 Excel...")
+os.makedirs("data", exist_ok=True)
+df_res_filtered.to_excel("data/typhoon_predictions.xlsx", index=False, engine='openpyxl')
+print("✅ 預測數據已成功匯出至 data/typhoon_predictions.xlsx！")
+
+# ==========================================
+# 🧠 AI 自動生成綜合結論 (防彈安全版)
 # ==========================================
 downgrade_text = ""
 
@@ -287,11 +306,9 @@ ai_paths_data = {
     ]
 }
 
-os.makedirs("data", exist_ok=True)
 with open("data/ai_paths.geojson", "w", encoding="utf-8") as f:
     json.dump(ai_paths_data, f, ensure_ascii=False, indent=2)
 
-# 轉換為 JS 字串供 HTML 渲染
 geojson_json_str = json.dumps(ai_paths_data, ensure_ascii=False)
 
 
@@ -413,4 +430,4 @@ html_content = f"""
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("🎉 恭喜！包含 AI 地圖嘅終極完整版 index.html 已成功生成！")
+print("🎉 恭喜！包含 AI 地圖嘅終極防護版 index.html 已成功生成！")
