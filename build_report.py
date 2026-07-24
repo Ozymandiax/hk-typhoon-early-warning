@@ -177,26 +177,36 @@ df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 # ==========================================
 # 🧠 AI 自動生成綜合結論
 # ==========================================
-max_t8_idx = int(df_res_filtered["AI 八號機率 (%)"].idxmax())
-max_t8_row = df_res_filtered.iloc[max_t8_idx]
-
-peak_time = max_t8_row["時間"]
-peak_prob = max_t8_row["AI 八號機率 (%)"]
-peak_spread = max_t8_row["陣風分歧度 (Uncertainty)"]
-
 downgrade_text = ""
-if peak_prob >= 20.0:
-    after_peak_df = df_res_filtered.iloc[max_t8_idx + 1:]
-    downgrade_candidates = after_peak_df[after_peak_df["AI 八號機率 (%)"] < 20.0]
-    
-    if not downgrade_candidates.empty:
-        down_row = downgrade_candidates.iloc[0]
-        down_time = down_row["時間"]
-        down_prob = down_row["AI 八號機率 (%)"]
-        down_spread = down_row["陣風分歧度 (Uncertainty)"]
-        downgrade_text = f"<br><br>📉 <b>( 8 ➡️ 3) 最有落波時間為香港時間【{down_time}】，機率為 {down_prob}%</b> <span style='color:#ffaaaa;'>(陣風分歧度：{down_spread} km/h)</span>。"
-    else:
-        downgrade_text = "<br><br>📉 <b>( 8 ➡️ 3) 落波評估：</b>風暴影響時間較長，預測期結束前暫未見明確落波信號。"
+
+# 🛡️ 防護機制：檢查數據庫是否為空，或是否全為 NaN
+if df_res_filtered.empty or df_res_filtered["AI 八號機率 (%)"].isna().all():
+    print("⚠️ 警告：API 傳回空數據，將使用安全預設值以防止系統崩潰。")
+    peak_time = "暫無數據"
+    peak_prob = 0.0
+    peak_spread = 0.0
+else:
+    # 強制將空缺值補 0，確保 idxmax() 絕對安全
+    df_res_filtered["AI 八號機率 (%)"] = df_res_filtered["AI 八號機率 (%)"].fillna(0)
+    max_t8_idx = int(df_res_filtered["AI 八號機率 (%)"].idxmax())
+    max_t8_row = df_res_filtered.iloc[max_t8_idx]
+
+    peak_time = max_t8_row["時間"]
+    peak_prob = max_t8_row["AI 八號機率 (%)"]
+    peak_spread = max_t8_row["陣風分歧度 (Uncertainty)"]
+
+    if peak_prob >= 20.0:
+        after_peak_df = df_res_filtered.iloc[max_t8_idx + 1:]
+        downgrade_candidates = after_peak_df[after_peak_df["AI 八號機率 (%)"] < 20.0]
+        
+        if not downgrade_candidates.empty:
+            down_row = downgrade_candidates.iloc[0]
+            down_time = down_row["時間"]
+            down_prob = down_row["AI 八號機率 (%)"]
+            down_spread = down_row["陣風分歧度 (Uncertainty)"]
+            downgrade_text = f"<br><br>📉 <b>( 8 ➡️ 3) 最有落波時間為香港時間【{down_time}】，機率為 {down_prob}%</b> <span style='color:#ffaaaa;'>(陣風分歧度：{down_spread} km/h)</span>。"
+        else:
+            downgrade_text = "<br><br>📉 <b>( 8 ➡️ 3) 落波評估：</b>風暴影響時間較長，預測期結束前暫未見明確落波信號。"
 
 if peak_prob >= 20.0:
     conclusion_html = f"""
