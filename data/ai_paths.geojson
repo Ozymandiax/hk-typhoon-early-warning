@@ -4,7 +4,7 @@
     {
       "type": "Feature",
       "properties": {
-        "model": "ECMWF AIFS (AI 大模型)",
+        "model": "ECMWF AIFS (AI)",
         "color": "#a855f7"
       },
       "geometry": {
@@ -32,7 +32,7 @@
     {
       "type": "Feature",
       "properties": {
-        "model": "Google GraphCast (AI)",
+        "model": "Google GraphCast",
         "color": "#06b6d4"
       },
       "geometry": {
@@ -60,7 +60,7 @@
     {
       "type": "Feature",
       "properties": {
-        "model": "GFS 物理集合平均",
+        "model": "GFS 物理模式",
         "color": "#ef4444"
       },
       "geometry": {
