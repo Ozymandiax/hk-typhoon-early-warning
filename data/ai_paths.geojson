@@ -1,0 +1,89 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "model": "ECMWF AIFS (AI 大模型)",
+        "color": "#a855f7"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            124.5,
+            16.0
+          ],
+          [
+            120.0,
+            18.0
+          ],
+          [
+            116.2,
+            20.2
+          ],
+          [
+            113.8,
+            21.9
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "model": "Google GraphCast (AI)",
+        "color": "#06b6d4"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            124.5,
+            16.0
+          ],
+          [
+            119.8,
+            17.8
+          ],
+          [
+            115.3,
+            19.8
+          ],
+          [
+            112.9,
+            21.4
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "model": "GFS 物理集合平均",
+        "color": "#ef4444"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            124.5,
+            16.0
+          ],
+          [
+            119.2,
+            17.5
+          ],
+          [
+            114.5,
+            19.5
+          ],
+          [
+            111.8,
+            20.8
+          ]
+        ]
+      }
+    }
+  ]
+}
