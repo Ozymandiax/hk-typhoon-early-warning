@@ -1,35 +1,51 @@
-name: Auto Build Dashboard & AI Map
+name: Build and Sync to Hugging Face Space
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # 每 6 小時自動更新一次
-  workflow_dispatch:       # 支援喺 GitHub 網頁手動 Click 按鈕 Trigger
+    - cron: '0 */6 * * *'  # 每 6 小時自動觸發 (可按需要修改)
+  workflow_dispatch:       # 支援喺 GitHub 網頁手動 Click 粒掣 Trigger
   push:
     branches:
       - main
 
 jobs:
-  build-and-deploy:
+  build-and-sync:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+      
     steps:
-      - name: Checkout Repo Code
+      - name: 📥 Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Python Environment
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Run Build Script
+      - name: 📦 Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas requests plotly scikit-learn
+
+      - name: 🚀 Run Dashboard Build Script
         run: |
           python build_report.py
 
-      - name: Commit and Push Updated Dashboard
+      - name: 💾 Commit to GitHub Repo
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html data/ai_paths.geojson
           git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update dashboard report and AI map" && git push)
+
+      - name: 🔥 Push Direct to Hugging Face Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          # ⚠️ 記得喺下面改返你嘅 Hugging Face 用戶名同 Space 名稱！
+          HF_USERNAME: Ozymand1az
+          HF_SPACE_NAME: hk-typhoon-early-warning
+        run: |
+          git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning
