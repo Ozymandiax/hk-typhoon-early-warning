@@ -1,42 +1,35 @@
-name: Update Typhoon Forecast Webpage
+name: Auto Build Dashboard & AI Map
 
 on:
   schedule:
-    - cron: '0 */12 * * *'  # 每天每 12 小時自動更新
-  workflow_dispatch:      # 允許手動點擊按鈕立即執行
+    - cron: '0 */6 * * *'  # 每 6 小時自動更新一次
+  workflow_dispatch:       # 支援喺 GitHub 網頁手動 Click 按鈕 Trigger
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4  # 升級到 v4 (全面支援 Node 24)
+      - name: Checkout Repo Code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5  # 升級到 v5 (全面支援 Node 24)
-      with:
-        python-version: '3.10'
+      - name: Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    - name: Install Dependencies
-      run: |
-        pip install pandas numpy plotly requests scikit-learn
+      - name: Run Build Script
+        run: |
+          python build_report.py
 
-    - name: Run Multi-Model Integration Script
-      run: python build_report.py
-
-    - name: Deploy index.html to Hugging Face Spaces
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      run: |
-        git config --global user.email "bot@github.com"
-        git config --global user.name "GitHub Action Bot"
-        
-        # 複製並更新 Hugging Face Space (記得替換為你的真實用戶名與 Space 名稱)
-        git clone https://oauth:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/Ozymand1az/hk-typhoon-early-warning hf_space
-        
-        cp index.html hf_space/index.html
-        cd hf_space
-        git add index.html
-        git commit -m "Update multi-model typhoon forecast: $(date)" || exit 0
-        git push origin main
+      - name: Commit and Push Updated Dashboard
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html data/ai_paths.geojson
+          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update dashboard report and AI map" && git push)
