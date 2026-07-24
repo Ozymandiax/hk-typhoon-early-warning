@@ -34,19 +34,19 @@ jobs:
         run: |
           python build_report.py
 
-      - name: 💾 Commit to GitHub Repo
+     - name: 💾 Commit to GitHub Repo
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 將更新嘅 HTML、地圖數據，以及可能匯出嘅 Excel 檔加入
+          # 將更新嘅 HTML、地圖數據，以及匯出嘅 Excel 檔加入
           git add index.html data/ai_paths.geojson data/typhoon_predictions.xlsx || true
           
           # 檢查是否有檔案被更新
           if ! git diff --staged --quiet; then
             git commit -m "auto: update dashboard report and AI map"
-            # 🔥 關鍵修復：推上去之前，先將 GitHub 最新版本拉下來同步 (防衝突)
-            git pull --rebase origin main
+            # 🔥 關鍵修復：加入 -X theirs，強制以 Action 剛剛生成的新檔案覆蓋任何衝突
+            git pull --rebase -X theirs origin main
             git push
           else
             echo "✅ 沒有新的數據需要更新"
