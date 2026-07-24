@@ -4,7 +4,7 @@
     {
       "type": "Feature",
       "properties": {
-        "model": "ECMWF AIFS (Data 推算)",
+        "model": "ECMWF (實時數據反向推算)",
         "color": "#a855f7"
       },
       "geometry": {
@@ -976,7 +976,7 @@
     {
       "type": "Feature",
       "properties": {
-        "model": "GFS 物理模式 (Data 推算)",
+        "model": "GFS (實時數據反向推算)",
         "color": "#ef4444"
       },
       "geometry": {
