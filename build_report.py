@@ -13,57 +13,43 @@ import math
 # ==========================================
 LATS = "22.18,22.30,22.31,22.35,22.50"
 LONS = "114.10,114.17,113.92,114.35,114.15"
-HK_CENTER = (22.3, 114.2)
+HK_CENTER = (22.3193, 114.1694)
 
 # ==========================================
-# 🤖 輕量級 AI 決策樹訓練模組 (無噪淨化版)
+# 🤖 輕量級 AI 決策樹訓練模組
 # ==========================================
 print("🤖 正在初始化輕量級 AI 決策樹模型...")
 X_train = [
-    [1010, 0.0,  0.0, 25], [1008, 1.5,  0.5, 30], [1006, 2.0,  0.8, 35],  # 0: 日常陣風
-    [1008, -1.0,-0.5, 20], [1005, 0.5,  0.2, 35],                       # 0: 氣壓反彈
-    [1006, 1.0,  1.5, 42],                                              # 🌟 0: 新增降噪樣本
-    [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],  # 1: T1 警戒
-    [1000, 5.0,  2.0, 48], [999,  6.0,  2.5, 50], [1003, 4.0,  1.8, 46],  # 3: T3 強風
-    [1004, 5.0,  2.2, 52], [1001, 7.0,  3.0, 55],                       # 8: T8 邊緣直擊
-    [1002, 4.5,  2.5, 50],                                              # 8: 西登擦邊威脅
-    [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]                        # 8: T8 烈風
+    [1010, 0.0,  0.0, 25], [1008, 1.5,  0.5, 30], [1006, 2.0,  0.8, 35],
+    [1008, -1.0,-0.5, 20], [1005, 0.5,  0.2, 35], [1006, 1.0,  1.5, 42],
+    [1004, 3.0,  1.0, 42], [1002, 3.5,  1.5, 45], [1005, 2.5,  0.8, 40],
+    [1000, 5.0,  2.0, 48], [999,  6.0,  2.5, 50], [1003, 4.0,  1.8, 46],
+    [1004, 5.0,  2.2, 52], [1001, 7.0,  3.0, 55], [1002, 4.5,  2.5, 50],
+    [1008, 3.0,  1.5, 62], [1006, 4.0,  2.0, 65]
 ]
 y_train = [0, 0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 8, 8, 8, 8, 8]
 
 ai_model = DecisionTreeClassifier(max_depth=5, random_state=42)
 ai_model.fit(X_train, y_train)
-print("✨ 終極四維 AI 決策樹訓練完成！")
 
 # ==========================================
-# ⚡ 數據獲取 (完全保留原版 URL)
+# ⚡ 數據獲取
 # ==========================================
 print("⚡ 正在向 Open-Meteo 請求數據...")
-url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs025&forecast_days=10"
+url_ecmwf = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=ecmwf_ifs04&forecast_days=10"
 url_gfs = f"https://ensemble-api.open-meteo.com/v1/ensemble?latitude={LATS}&longitude={LONS}&hourly=wind_gusts_10m,pressure_msl&models=gfs_seamless&forecast_days=10"
-url_dir = "https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs025&forecast_days=10"
+url_dir = f"https://api.open-meteo.com/v1/forecast?latitude=22.30&longitude=114.17&hourly=wind_direction_10m&models=ecmwf_ifs025&forecast_days=10"
 
 try:
     res_ec = requests.get(url_ecmwf, timeout=15).json()
-    if isinstance(res_ec, dict) and res_ec.get('error'):
-        print(f"❌ ECMWF API 拒絕請求: {res_ec.get('reason')}")
-        exit(1)
-    res_ec_list = res_ec if isinstance(res_ec, list) else [res_ec]
-    
     res_gfs = requests.get(url_gfs, timeout=15).json()
-    if isinstance(res_gfs, dict) and res_gfs.get('error'):
-        print(f"❌ GFS API 拒絕請求: {res_gfs.get('reason')}")
-        exit(1)
-    res_gfs_list = res_gfs if isinstance(res_gfs, list) else [res_gfs]
-
     res_dir = requests.get(url_dir, timeout=15).json()
-    if isinstance(res_dir, dict) and res_dir.get('error'):
-        print(f"❌ 風向 API 拒絕請求: {res_dir.get('reason')}")
-        exit(1)
-        
 except Exception as e:
     print(f"❌ API 請求徹底失敗: {e}")
     exit(1)
+
+times = res_ec_list = res_ec if isinstance(res_ec, list) else [res_ec]
+res_gfs_list = res_gfs if isinstance(res_gfs, list) else [res_gfs]
 
 times = res_ec_list[0]['hourly']['time']
 dir_dict = dict(zip(res_dir['hourly']['time'], res_dir['hourly']['wind_direction_10m']))
@@ -74,33 +60,23 @@ gfs_wind_keys = [k for k in res_gfs_list[0]['hourly'].keys() if "wind_gusts_10m_
 gfs_press_keys= [k for k in res_gfs_list[0]['hourly'].keys() if "pressure_msl_member" in k]
 
 num_times = len(times)
-num_ec_members = len(ec_wind_keys)
-num_gfs_members = len(gfs_wind_keys)
-
-ec_winds_max = np.zeros((num_times, num_ec_members))
-ec_press_min = np.full((num_times, num_ec_members), 1050.0)
-gfs_winds_max = np.zeros((num_times, num_gfs_members))
-gfs_press_min = np.full((num_times, num_gfs_members), 1050.0)
+ec_winds_max = np.zeros((num_times, len(ec_wind_keys)))
+ec_press_min = np.full((num_times, len(ec_press_keys)), 1050.0)
+gfs_winds_max = np.zeros((num_times, len(gfs_wind_keys)))
+gfs_press_min = np.full((num_times, len(gfs_press_keys)), 1050.0)
 
 for loc_data in res_ec_list:
     hourly = loc_data['hourly']
-    loc_winds = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 0 for k in ec_wind_keys] for idx in range(num_times)])
-    loc_press = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 1050.0 for k in ec_press_keys] for idx in range(num_times)])
-    ec_winds_max = np.maximum(ec_winds_max, loc_winds)
-    ec_press_min = np.minimum(ec_press_min, loc_press)
+    ec_winds_max = np.maximum(ec_winds_max, np.array([[hourly[k][idx] or 0 for k in ec_wind_keys] for idx in range(num_times)]))
+    ec_press_min = np.minimum(ec_press_min, np.array([[hourly[k][idx] or 1050.0 for k in ec_press_keys] for idx in range(num_times)]))
 
 for loc_data in res_gfs_list:
     hourly = loc_data['hourly']
-    loc_winds = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 0 for k in gfs_wind_keys] for idx in range(num_times)])
-    loc_press = np.array([[hourly[k][idx] if hourly[k][idx] is not None else 1050.0 for k in gfs_press_keys] for idx in range(num_times)])
-    gfs_winds_max = np.maximum(gfs_winds_max, loc_winds)
-    gfs_press_min = np.minimum(gfs_press_min, loc_press)
+    gfs_winds_max = np.maximum(gfs_winds_max, np.array([[hourly[k][idx] or 0 for k in gfs_wind_keys] for idx in range(num_times)]))
+    gfs_press_min = np.minimum(gfs_press_min, np.array([[hourly[k][idx] or 1050.0 for k in gfs_press_keys] for idx in range(num_times)]))
 
 results = []
 
-# ==========================================
-# 核心計算 (完全 100% 原版邏輯，無任何改動)
-# ==========================================
 for idx, t_str in enumerate(times):
     dt = datetime.strptime(t_str, "%Y-%m-%dT%H:%M") + timedelta(hours=8)
     display_time = dt.strftime("%m月%d日 %H:00")
@@ -110,10 +86,7 @@ for idx, t_str in enumerate(times):
     gfs_winds = gfs_winds_max[idx]
     gfs_press = gfs_press_min[idx]
     
-    center_dir = dir_dict.get(t_str, 90)
-    if center_dir is None: 
-        center_dir = 90
-        
+    center_dir = dir_dict.get(t_str, 90) or 90
     idx_24h = max(0, idx - 24)
     idx_3h  = max(0, idx - 3)
     
@@ -122,58 +95,36 @@ for idx, t_str in enumerate(times):
     gfs_press_drop_24h = gfs_press_min[idx_24h] - gfs_press
     gfs_press_drop_3h  = gfs_press_min[idx_3h] - gfs_press
     
-    multiplier = 1.0
-    if (center_dir >= 315) or (center_dir <= 45):
-        multiplier = 0.8
-    elif (center_dir >= 90) and (center_dir <= 180):
-        multiplier = 1.05
+    multiplier = 0.8 if (center_dir >= 315) or (center_dir <= 45) else (1.05 if 90 <= center_dir <= 180 else 1.0)
         
     ec_winds_adj = ec_winds * multiplier
     gfs_winds_adj = gfs_winds * multiplier
 
-    # 軌道 1：傳統物理門檻判定
     ec_t1_phy = (ec_press <= 1005) & (ec_winds_adj >= 38) & (ec_press_drop_24h >= 1.5)
     gfs_t1_phy = (gfs_press <= 1005) & (gfs_winds_adj >= 38) & (gfs_press_drop_24h >= 1.5)
-    
     ec_t8_phy = ((ec_press <= 1005) & (ec_winds_adj >= 48)) | (ec_winds_adj >= 55) | ((ec_press_drop_3h >= 2.0) & (ec_winds_adj >= 45))
     gfs_t8_phy = ((gfs_press <= 1005) & (gfs_winds_adj >= 48)) | (gfs_winds_adj >= 55) | ((gfs_press_drop_3h >= 2.0) & (gfs_winds_adj >= 45))
     
-    prob_t1_phy = round(((np.sum(ec_t1_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t1_phy)/len(gfs_press)*100)*0.4), 1)
-    prob_t8_phy = round(((np.sum(ec_t8_phy)/len(ec_press)*100)*0.6) + ((np.sum(gfs_t8_phy)/len(gfs_press)*100)*0.4), 1)
+    len_ec = len(ec_press) if len(ec_press) > 0 else 1
+    len_gfs = len(gfs_press) if len(gfs_press) > 0 else 1
+    prob_t1_phy = round(((np.sum(ec_t1_phy)/len_ec*100)*0.6) + ((np.sum(gfs_t1_phy)/len_gfs*100)*0.4), 1)
+    prob_t8_phy = round(((np.sum(ec_t8_phy)/len_ec*100)*0.6) + ((np.sum(gfs_t8_phy)/len_gfs*100)*0.4), 1)
 
-    # 軌道 2：🤖 四維 AI 決策樹判定
-    ec_ai_preds = []
-    for m in range(len(ec_press)):
-        feat = [[ec_press[m], ec_press_drop_24h[m], ec_press_drop_3h[m], ec_winds_adj[m]]]
-        ec_ai_preds.append(ai_model.predict(feat)[0])
-        
-    gfs_ai_preds = []
-    for m in range(len(gfs_press)):
-        feat = [[gfs_press[m], gfs_press_drop_24h[m], gfs_press_drop_3h[m], gfs_winds_adj[m]]]
-        gfs_ai_preds.append(ai_model.predict(feat)[0])
-        
-    ec_ai_preds = np.array(ec_ai_preds)
-    gfs_ai_preds = np.array(gfs_ai_preds)
+    ec_ai_preds = np.array([ai_model.predict([[ec_press[m], ec_press_drop_24h[m], ec_press_drop_3h[m], ec_winds_adj[m]]])[0] for m in range(len(ec_press))])
+    gfs_ai_preds = np.array([ai_model.predict([[gfs_press[m], gfs_press_drop_24h[m], gfs_press_drop_3h[m], gfs_winds_adj[m]]])[0] for m in range(len(gfs_press))])
     
-    prob_t1_ec_ai = np.sum(ec_ai_preds >= 1) / len(ec_ai_preds) * 100
-    prob_t8_ec_ai = np.sum(ec_ai_preds == 8) / len(ec_ai_preds) * 100
-    prob_t1_gfs_ai = np.sum(gfs_ai_preds >= 1) / len(gfs_ai_preds) * 100
-    prob_t8_gfs_ai = np.sum(gfs_ai_preds == 8) / len(gfs_ai_preds) * 100
+    prob_t1_ec_ai = (np.sum(ec_ai_preds >= 1) / len(ec_ai_preds) * 100) if len(ec_ai_preds) > 0 else 0.0
+    prob_t8_ec_ai = (np.sum(ec_ai_preds == 8) / len(ec_ai_preds) * 100) if len(ec_ai_preds) > 0 else 0.0
+    prob_t1_gfs_ai = (np.sum(gfs_ai_preds >= 1) / len(gfs_ai_preds) * 100) if len(gfs_ai_preds) > 0 else 0.0
+    prob_t8_gfs_ai = (np.sum(gfs_ai_preds == 8) / len(gfs_ai_preds) * 100) if len(gfs_ai_preds) > 0 else 0.0
     
     prob_t1_ai = round((prob_t1_ec_ai * 0.6) + (prob_t1_gfs_ai * 0.4), 1)
     prob_t8_ai = round((prob_t8_ec_ai * 0.6) + (prob_t8_gfs_ai * 0.4), 1)
-
-    ec_spread = np.std(ec_winds_adj) if len(ec_winds_adj) > 0 else 0
-    gfs_spread = np.std(gfs_winds_adj) if len(gfs_winds_adj) > 0 else 0
-    model_spread = round((ec_spread * 0.6) + (gfs_spread * 0.4), 1)
+    model_spread = round((np.std(ec_winds_adj) * 0.6) + (np.std(gfs_winds_adj) * 0.4), 1) if len(ec_winds_adj) > 0 else 0
 
     results.append({
-        "時間": display_time,
-        "物理一號機率 (%)": prob_t1_phy,
-        "物理八號機率 (%)": prob_t8_phy,
-        "AI 一號機率 (%)": prob_t1_ai,
-        "AI 八號機率 (%)": prob_t8_ai,
-        "陣風分歧度 (Uncertainty)": model_spread
+        "時間": display_time, "物理一號機率 (%)": prob_t1_phy, "物理八號機率 (%)": prob_t8_phy,
+        "AI 一號機率 (%)": prob_t1_ai, "AI 八號機率 (%)": prob_t8_ai, "陣風分歧度 (Uncertainty)": model_spread
     })
 
 df_res = pd.DataFrame(results)
@@ -182,83 +133,61 @@ df_res_filtered = df_res.iloc[::6, :].reset_index(drop=True)
 # ==========================================
 # 📊 新增：自動匯出 Excel 報告
 # ==========================================
-print("📊 正在將預測結果匯出至 Excel...")
 os.makedirs("data", exist_ok=True)
 df_res_filtered.to_excel("data/typhoon_predictions.xlsx", index=False, engine='openpyxl')
 
 # ==========================================
-# 🧠 AI 自動生成綜合結論 (原版邏輯 + int 轉換防護)
+# 🧠 AI 自動生成綜合結論
 # ==========================================
-max_t8_idx = int(df_res_filtered["AI 八號機率 (%)"].idxmax())
-max_t8_row = df_res_filtered.iloc[max_t8_idx]
-
-peak_time = max_t8_row["時間"]
-peak_prob = max_t8_row["AI 八號機率 (%)"]
-peak_spread = max_t8_row["陣風分歧度 (Uncertainty)"]
-
 downgrade_text = ""
-if peak_prob >= 20.0:
-    after_peak_df = df_res_filtered.iloc[max_t8_idx + 1:]
-    downgrade_candidates = after_peak_df[after_peak_df["AI 八號機率 (%)"] < 20.0]
-    
-    if not downgrade_candidates.empty:
-        down_row = downgrade_candidates.iloc[0]
-        down_time = down_row["時間"]
-        down_prob = down_row["AI 八號機率 (%)"]
-        down_spread = down_row["陣風分歧度 (Uncertainty)"]
-        downgrade_text = f"<br><br>📉 <b>( 8 ➡️ 3) 最有落波時間為香港時間【{down_time}】，機率為 {down_prob}%</b> <span style='color:#ffaaaa;'>(陣風分歧度：{down_spread} km/h)</span>。"
-    else:
-        downgrade_text = "<br><br>📉 <b>( 8 ➡️ 3) 落波評估：</b>風暴影響時間較長，預測期結束前暫未見明確落波信號。"
+if df_res_filtered.empty or df_res_filtered["AI 八號機率 (%)"].isna().all():
+    peak_time, peak_prob, peak_spread = "暫無數據", 0.0, 0.0
+else:
+    df_res_filtered["AI 八號機率 (%)"] = df_res_filtered["AI 八號機率 (%)"].fillna(0)
+    max_t8_idx = int(df_res_filtered["AI 八號機率 (%)"].idxmax())
+    max_t8_row = df_res_filtered.iloc[max_t8_idx]
+    peak_time, peak_prob, peak_spread = max_t8_row["時間"], max_t8_row["AI 八號機率 (%)"], max_t8_row["陣風分歧度 (Uncertainty)"]
+
+    if peak_prob >= 20.0:
+        after_peak_df = df_res_filtered.iloc[max_t8_idx + 1:]
+        downgrade_candidates = after_peak_df[after_peak_df["AI 八號機率 (%)"] < 20.0]
+        if not downgrade_candidates.empty:
+            down_row = downgrade_candidates.iloc[0]
+            downgrade_text = f"<br><br>📉 <b>( 8 ➡️ 3) 最有落波時間為香港時間【{down_row['時間']}】，機率為 {down_row['AI 八號機率 (%)']}%</b> <span style='color:#ffaaaa;'>(陣風分歧度：{down_row['陣風分歧度 (Uncertainty)']} km/h)</span>。"
+        else:
+            downgrade_text = "<br><br>📉 <b>( 8 ➡️ 3) 落波評估：</b>風暴影響時間較長，預測期結束前暫未見明確落波信號。"
 
 if peak_prob >= 20.0:
-    conclusion_html = f"""
-    <div style="background: linear-gradient(135deg, #4b1313, #8b0000); padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ff3333; color: #fff;">
-        🚨 <b>AI 實時威脅判定：</b><br>
-        根據最新四維運算，預計<b>最有可能懸掛八號風球的時間為【{peak_time}】</b>，
-        最高機率達到 <b>{peak_prob}%</b> 
-        <span style="color:#ffaaaa;">(陣風分歧度：{peak_spread} km/h)</span>。
-        {downgrade_text}
-        <br><br><i>*系統提示：若分歧度逐步收窄至 10 km/h 以下，即代表各大超級電腦達成共識，風暴將造成嚴重威脅！</i>
-    </div>
-    """
+    conclusion_html = f"""<div style="background: linear-gradient(135deg, #4b1313, #8b0000); padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ff3333; color: #fff;">🚨 <b>AI 實時威脅判定：</b><br>根據最新四維運算，預計<b>最有可能懸掛八號風球的時間為【{peak_time}】</b>，最高機率達到 <b>{peak_prob}%</b> <span style="color:#ffaaaa;">(陣風分歧度：{peak_spread} km/h)</span>。{downgrade_text}<br><br><i>*系統提示：若分歧度逐步收窄至 10 km/h 以下，即代表各大超級電腦達成共識，風暴將造成嚴重威脅！</i></div>"""
 elif peak_prob > 0:
-    conclusion_html = f"""
-    <div style="background: #2b2b00; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ffd700; color: #fff;">
-        ⚠️ <b>AI 實時威脅判定：</b><br>
-        系統目前偵測到八號風球信號，預計高峰期為<b>【{peak_time}】</b>，機率為 <b>{peak_prob}%</b> <span style="color:#aaaaaa;">(陣風分歧度：{peak_spread} km/h)</span>。目前威脅屬於中低度或處於分歧狀態，請密切留意。
-    </div>
-    """
+    conclusion_html = f"""<div style="background: #2b2b00; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #ffd700; color: #fff;">⚠️ <b>AI 實時威脅判定：</b><br>系統目前偵測到八號風球信號，預計高峰期為<b>【{peak_time}】</b>，機率為 <b>{peak_prob}%</b>。目前威脅屬於中低度或處於分歧狀態，請密切留意。</div>"""
 else:
-    conclusion_html = f"""
-    <div style="background: #1a2a1a; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #33ff33; color: #fff;">
-        ✅ <b>AI 實時威脅判定：</b><br>
-        根據當前數據，未來 10 天內<b>暫未偵測到實質的八號風球威脅</b>。
-    </div>
-    """
+    conclusion_html = f"""<div style="background: #1a2a1a; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 15px; line-height: 1.6; border-left: 4px solid #33ff33; color: #fff;">✅ <b>AI 實時威脅判定：</b><br>根據當前數據，未來 10 天內<b>暫未偵測到實質的八號風球威脅</b>。</div>"""
 
 hkt_now = datetime.now(timezone.utc) + timedelta(hours=8)
 update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 
 # ==========================================
-# 🗺️ 新增：AI 地圖路徑數據 (根據 Data 動態推算)
+# 🗺️ 升級：AI 空間推算演算法 (修復方向與平滑問題)
 # ==========================================
-print("🗺️ 正在根據實時 Data 生成 AI 動態路徑地圖...")
+print("🗺️ 正在根據實時 Data 生成順滑 AI 動態路徑地圖...")
 def generate_ai_path(times_arr, winds_arr, dirs_dict):
     coords = []
-    for i, t_str in enumerate(times_arr):
+    # 🔥 關鍵修復：每 6 小時取樣一次 (降頻)，消除 Jitter 震盪，畫出順滑軌跡
+    for i in range(0, len(times_arr), 6):
         ws = winds_arr[i]
-        if ws < 35: continue # 只有當陣風 >= 35km/h 時才視為有系統逼近並畫線
+        if ws < 35: continue # 只有陣風 >= 35km/h 才畫線
         
-        wd = dirs_dict.get(t_str, 90)
-        # 白貝羅定律：低壓中心約在風向左前方 100 度
-        storm_bearing = (wd - 100) % 360
-        # 根據陣風強度反向推算距離
-        distance_km = max(50, 600 - (ws * 5.5))
+        wd = dirs_dict.get(times_arr[i], 90)
+        # 🔥 關鍵修復：白貝羅定律改為 +100。吹東風(90)時，風暴在南面(190)南海海域！
+        storm_bearing = (wd + 100) % 360
+        # 距離：風越大距離香港越近
+        distance_km = max(30, 500 - (ws * 4.5))
         
         bearing_rad = math.radians(storm_bearing)
         delta_lat = (distance_km * math.cos(bearing_rad)) / 111.0
         delta_lon = (distance_km * math.sin(bearing_rad)) / (111.0 * math.cos(math.radians(HK_CENTER[0])))
-        coords.append([round(HK_CENTER[1] + delta_lon, 2), round(HK_CENTER[0] + delta_lat, 2)])
+        coords.append([round(HK_CENTER[1] + delta_lon, 3), round(HK_CENTER[0] + delta_lat, 3)])
     return coords
 
 ec_mean_winds = np.mean(ec_winds_max, axis=1)
@@ -267,11 +196,11 @@ gfs_mean_winds = np.mean(gfs_winds_max, axis=1)
 ai_paths_data = {"type": "FeatureCollection", "features": []}
 ec_coords = generate_ai_path(times, ec_mean_winds, dir_dict)
 if len(ec_coords) >= 2:
-    ai_paths_data["features"].append({"type": "Feature", "properties": { "model": "ECMWF ( Data 實時反向推算)", "color": "#a855f7" }, "geometry": { "type": "LineString", "coordinates": ec_coords }})
+    ai_paths_data["features"].append({"type": "Feature", "properties": { "model": "ECMWF ( Data 反推)", "color": "#a855f7" }, "geometry": { "type": "LineString", "coordinates": ec_coords }})
 
 gfs_coords = generate_ai_path(times, gfs_mean_winds, dir_dict)
 if len(gfs_coords) >= 2:
-    ai_paths_data["features"].append({"type": "Feature", "properties": { "model": "GFS ( Data 實時反向推算)", "color": "#ef4444" }, "geometry": { "type": "LineString", "coordinates": gfs_coords }})
+    ai_paths_data["features"].append({"type": "Feature", "properties": { "model": "GFS ( Data 反推)", "color": "#ef4444" }, "geometry": { "type": "LineString", "coordinates": gfs_coords }})
 
 with open("data/ai_paths.geojson", "w", encoding="utf-8") as f:
     json.dump(ai_paths_data, f, ensure_ascii=False, indent=2)
@@ -279,34 +208,21 @@ with open("data/ai_paths.geojson", "w", encoding="utf-8") as f:
 geojson_json_str = json.dumps(ai_paths_data, ensure_ascii=False)
 
 # ==========================================
-# 📊 繪製終極對比圖表 (新增：顯示節點 + 固定 0-100% Y軸)
+# 📊 繪圖 (固定 0-100% Y軸 + 節點)
 # ==========================================
-print("⚡ 正在繪製終極四維集成對比圖...")
 fig = go.Figure()
 hover_temp = "%{y}%<br>模型分歧度: %{customdata} km/h"
-
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["物理一號機率 (%)"], name="🟡 傳統物理 (一號風球)", mode='lines+markers', marker=dict(size=6), line=dict(color='yellow', width=2, dash='dash'), customdata=df_res_filtered["陣風分歧度 (Uncertainty)"], hovertemplate=hover_temp))
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["AI 一號機率 (%)"], name="🌟 AI 決策樹 (一號風球)", mode='lines+markers', marker=dict(size=7), line=dict(color='gold', width=3), customdata=df_res_filtered["陣風分歧度 (Uncertainty)"], hovertemplate=hover_temp))
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["物理八號機率 (%)"], name="🔵 傳統物理 (八號風球)", mode='lines+markers', marker=dict(size=6), line=dict(color='deepskyblue', width=2, dash='dash'), customdata=df_res_filtered["陣風分歧度 (Uncertainty)"], hovertemplate=hover_temp))
 fig.add_trace(go.Scatter(x=df_res_filtered["時間"], y=df_res_filtered["AI 八號機率 (%)"], name="🔴 AI 決策樹 (八號風球)", mode='lines+markers', marker=dict(size=7), line=dict(color='red', width=3), customdata=df_res_filtered["陣風分歧度 (Uncertainty)"], hovertemplate=hover_temp))
 
-# 強制 Y 軸鎖定喺 0 至 100%
-fig.update_layout(
-    title="🌀 香港風暴信號預測：四維地形修正 AI 雙軌制",
-    yaxis_title="發出機率 (%)",
-    xaxis_title="預測時間",
-    yaxis=dict(range=[0, 100]),
-    hovermode="x unified",
-    template="plotly_dark",
-    paper_bgcolor="#1e1e1e",
-    plot_bgcolor="#1e1e1e"
-)
-
+fig.update_layout(title="🌀 香港風暴信號預測：四維地形修正 AI 雙軌制", yaxis_title="發出機率 (%)", xaxis_title="預測時間", yaxis=dict(range=[0, 100]), hovermode="x unified", template="plotly_dark", paper_bgcolor="#1e1e1e", plot_bgcolor="#1e1e1e")
 table_html = df_res_filtered.to_html(index=False, border=0)
 chart_html = fig.to_html(full_html=False, include_plotlyjs='cdn')
 
 # ==========================================
-# 🖥️ HTML 拼裝 (包含 Chart + Data-Driven Map)
+# 🖥️ 終極 HTML 拼裝
 # ==========================================
 html_content = f"""
 <!DOCTYPE html>
@@ -328,7 +244,6 @@ html_content = f"""
         th, td {{ padding: 10px; border-bottom: 1px solid #333; }}
         th {{ background-color: #2b2b2b; color: #fff; }}
         tr:hover {{ background-color: #252525; }}
-        
         #typhoon-map {{ width: 100%; height: 500px; border-radius: 8px; background: #1a1a1a; margin-top: 25px; border: 1px solid #333; }}
         .map-legend {{ background: rgba(30, 30, 30, 0.85); color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 12px; border: 1px solid #444; }}
         .legend-item {{ display: flex; align-items: center; margin-bottom: 4px; }}
@@ -338,63 +253,37 @@ html_content = f"""
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌀 香港潛在風暴雙軌早期預警系統 (終極降噪版)</h1>
+            <h1>🌀 香港潛在風暴雙軌早期預警系統</h1>
             <div class="update-time">最後自動更新（香港時間 HKT）: {update_time_str}</div>
         </div>
         
         {conclusion_html}
         
         <div class="intro-box">
-            💡 <b>系統演算法終極升級：</b> 本系統已整合「五星區域極端值聚合」、「風向地形懲罰過濾」、「3小時氣壓急降特徵」，並新增了<b>「24小時氣壓持續下沉」過濾機制</b>。系統不僅能自動捕捉擦邊強風，更徹底消除了夏季局部雷雨及熱低壓帶來的假陽性噪音 (Noise)。
+            💡 <b>地圖演算法升級：</b> 地圖現已導入 <b>AI 白貝羅定律平滑演算法</b>，透過擷取實時風向與風速，每 6 小時進行一次降頻運算，動態反向追蹤風暴真實移動軌跡！
         </div>
-
         <div>{chart_html}</div>
         
         <div id="typhoon-map"></div>
         <div style="font-size: 12px; color: #888; text-align: center; margin-top: 5px;">*地圖路徑由本系統 AI 基於 Open-Meteo 實時風向/風速動態推算生成。</div>
         
-        <div class="table-container">
-            <h3>📋 四維綜合預測數據表</h3>
-            {table_html}
-        </div>
+        <div class="table-container"><h3>📋 四維綜合預測數據表</h3>{table_html}</div>
     </div>
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         const map = L.map('typhoon-map').setView([21.2, 115.0], 7);
-
-        L.tileLayer('https://{{s}}.basemaps.cartocdn.com/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
-            maxZoom: 12, minZoom: 5,
-            attribution: '&copy; OpenStreetMap & CartoDB'
-        }}).addTo(map);
+        L.tileLayer('https://{{s}}.basemaps.cartocdn.com/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{ maxZoom: 12, minZoom: 5 }}).addTo(map);
 
         const hkCoords = [22.3193, 114.1694];
-        const rings = [
-            {{ r: 200000, c: '#eab308', label: '200km 外圍烈風圈' }},
-            {{ r: 100000, c: '#f97316', label: '100km 暴風核心圈' }},
-            {{ r: 50000,  c: '#ef4444', label: '50km 穿心直擊圈' }}
-        ];
+        [{{ r: 200000, c: '#eab308', label: '200km 外圍烈風圈' }}, {{ r: 100000, c: '#f97316', label: '100km 暴風核心圈' }}, {{ r: 50000, c: '#ef4444', label: '50km 穿心直擊圈' }}]
+        .forEach(ring => L.circle(hkCoords, {{ color: ring.c, fillColor: ring.c, fillOpacity: 0.08, weight: 1.5, dashArray: '4, 6' }}).bindTooltip(ring.label).addTo(map));
+        L.circleMarker(hkCoords, {{ radius: 6, color: '#3b82f6', fillColor: '#60a5fa', fillOpacity: 1 }}).addTo(map).bindPopup('<b>香港 (Hong Kong)</b>');
 
-        rings.forEach(ring => {{
-            L.circle(hkCoords, {{
-                color: ring.c, fillColor: ring.c, fillOpacity: 0.08, weight: 1.5, dashArray: '4, 6'
-            }}).bindTooltip(ring.label).addTo(map);
-        }});
-
-        L.circleMarker(hkCoords, {{ radius: 6, color: '#3b82f6', fillColor: '#60a5fa', fillOpacity: 1 }}).addTo(map)
-         .bindPopup('<b>香港 (Hong Kong)</b><br>預警系統定位中心');
-
-        // 注入由 Python 生成的 GeoJSON 數據
         const geojsonData = {geojson_json_str};
-
         if (geojsonData.features.length > 0) {{
             L.geoJSON(geojsonData, {{
-                style: function(feature) {{
-                    return {{ color: feature.properties.color, weight: 3.5, opacity: 0.85 }};
-                }},
-                onEachFeature: function(feature, layer) {{
-                    layer.bindPopup('<b>預測模式：' + feature.properties.model + '</b>');
-                }}
+                style: f => ({{ color: f.properties.color, weight: 3.5, opacity: 0.85 }}),
+                onEachFeature: (f, l) => l.bindPopup('<b>' + f.properties.model + '</b>')
             }}).addTo(map);
         }}
 
@@ -413,8 +302,5 @@ html_content = f"""
 </body>
 </html>
 """
-
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-
-print("🎉 恭喜！完美還原 70% 機率計算 + 升級 AI 地圖的 index.html 已成功生成！")
