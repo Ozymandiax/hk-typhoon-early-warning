@@ -35,11 +35,20 @@ jobs:
           python build_report.py
 
       - name: 💾 Commit to GitHub Repo
-        run: |
+       run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html data/ai_paths.geojson
-          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update dashboard report and AI map" && git push)
+          
+          # 檢查是否有檔案被更新
+          if ! git diff --staged --quiet; then
+            git commit -m "auto: update dashboard report and AI map"
+            # 🔥 關鍵修復：推上去之前，先將 GitHub 最新版本拉下來同步 (防衝突)
+            git pull --rebase origin main
+            git push
+          else
+            echo "✅ 沒有新的數據需要更新"
+          fi
 
       - name: 🔥 Push Direct to Hugging Face Spaces
         env:
