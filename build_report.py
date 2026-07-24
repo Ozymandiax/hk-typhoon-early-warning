@@ -217,12 +217,20 @@ update_time_str = hkt_now.strftime('%Y-%m-%d %H:%M')
 # ==========================================
 print("🗺️ 正在從太平洋/南海網格追蹤氣旋連續軌跡...")
 
-# 提高網格密度 (間隔 1.5 度，覆蓋南海至西太平洋)
-grid_lats = [12.0, 13.5, 15.0, 16.5, 18.0, 19.5, 21.0, 22.5, 24.0, 25.5]
-grid_lons = [110.0, 112.0, 114.0, 116.0, 118.0, 120.0, 122.0, 124.0]
+# 🚨 關鍵修復：把 X 軸和 Y 軸交叉，生成真正的 2D 矩陣座標對 (Lat, Lon pairs)
+lat_axes = [14.0, 16.0, 18.0, 20.0, 22.0, 24.0]
+lon_axes = [110.0, 112.0, 114.0, 116.0, 118.0, 120.0, 122.0, 124.0]
 
-grid_lat_str = ",".join(map(str, grid_lats))
-grid_lon_str = ",".join(map(str, grid_lons))
+grid_lats = []
+grid_lons = []
+for lat in lat_axes:
+    for lon in lon_axes:
+        grid_lats.append(str(lat))
+        grid_lons.append(str(lon))
+
+# 生成 6x8 = 48 個網格點 (完美符合 Open-Meteo 免費版 100 點的限制)
+grid_lat_str = ",".join(grid_lats)
+grid_lon_str = ",".join(grid_lons)
 
 url_grid_ec = f"https://api.open-meteo.com/v1/forecast?latitude={grid_lat_str}&longitude={grid_lon_str}&hourly=pressure_msl,wind_speed_10m&models=ecmwf_ifs025&forecast_days=7"
 
@@ -235,7 +243,6 @@ def fetch_and_track_tc():
             
         time_steps = len(res[0]['hourly']['time'])
         tc_track_coords = []
-        
         last_lat, last_lon = None, None
         
         for t_idx in range(0, time_steps, 3):  # 每 3 小時採樣一次
@@ -243,36 +250,42 @@ def fetch_and_track_tc():
             dt = datetime.strptime(t_str, "%Y-%m-%dT%H:%M") + timedelta(hours=8)
             time_display = dt.strftime("%m-%d %H:00")
             
-            min_p = 1018.0
+            absolute_min_p = 1050.0
+            
+            # 步驟一：找出當前時間，整片海域嘅「絕對最低氣壓」
+            for pt in res:
+                p = pt['hourly']['pressure_msl'][t_idx]
+                if p is not None and p < absolute_min_p:
+                    absolute_min_p = p
+            
             best_lat, best_lon = None, None
+            best_dist = float('inf')
             max_ws = 0
             
-            # 搜尋該時間點氣壓最低的網格點
+            # 步驟二：找出擁有此低壓，且「最貼近上一個中心位置」嘅點（防止系統喺無颱風時亂跳）
             for pt in res:
-                p_val = pt['hourly']['pressure_msl'][t_idx]
-                ws_val = pt['hourly']['wind_speed_10m'][t_idx] or 0
-                c_lat, c_lon = pt['latitude'], pt['longitude']
+                p = pt['hourly']['pressure_msl'][t_idx]
+                ws = pt['hourly']['wind_speed_10m'][t_idx] or 0
                 
-                # 如果已經有上一個中心，優先搜尋距離上個中心 300km 內的最低氣壓點 (避免跳場)
-                if last_lat is not None:
-                    dist_from_last = math.hypot(c_lat - last_lat, c_lon - last_lon) * 111
-                    if dist_from_last > 350: # 跳太遠就忽略
-                        continue
-                
-                if p_val is not None and p_val < min_p:
-                    min_p = p_val
-                    best_lat = c_lat
-                    best_lon = c_lon
-                    max_ws = ws_val
+                # 容許比絕對最低氣壓高 1.0 hPa 內的誤差，尋找最平滑路徑
+                if p is not None and p <= absolute_min_p + 1.0:
+                    c_lat, c_lon = pt['latitude'], pt['longitude']
+                    if last_lat is not None:
+                        dist = math.hypot(c_lat - last_lat, c_lon - last_lon) * 111
+                    else:
+                        dist = 0
+                        
+                    if dist < best_dist:
+                        best_dist = dist
+                        best_lat, best_lon = c_lat, c_lon
+                        max_ws = ws
             
-            # 只要找到有效低壓中心（<= 1012 hPa），就加入路徑
-            if best_lat is not None and min_p <= 1012.0:
+            # 步驟三：記錄軌跡 (門檻放寬至 1016 hPa，確保即使係季風低壓或殘餘低壓區也能畫出連續線路)
+            if best_lat is not None and absolute_min_p <= 1016.0:
                 last_lat, last_lon = best_lat, best_lon
                 
-                # 計算距港距離
                 lat1, lon1, lat2, lon2 = map(math.radians, [HK_CENTER[0], HK_CENTER[1], best_lat, best_lon])
-                dlat, dlon = lat2 - lat1, lon2 - lon1
-                a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+                a = math.sin((lat2-lat1)/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin((lon2-lon1)/2)**2
                 dist_to_hk = round(6371 * 2 * math.asin(math.sqrt(a)))
                 
                 category, cat_color = classify_tc(max_ws)
@@ -282,9 +295,9 @@ def fetch_and_track_tc():
                     "type": "Feature",
                     "properties": {
                         "time": time_display,
-                        "model": "ECMWF 氣旋路徑追蹤",
+                        "model": "ECMWF 中心路徑",
                         "wind_speed": f"{int(max_ws)} km/h",
-                        "pressure": f"{int(min_p)} hPa",
+                        "pressure": f"{int(absolute_min_p)} hPa",
                         "category": category,
                         "color": cat_color,
                         "dist_hk": f"{dist_to_hk} km",
@@ -293,16 +306,16 @@ def fetch_and_track_tc():
                     "geometry": { "type": "Point", "coordinates": [best_lon, best_lat] }
                 })
                 
-        # 只要採樣點 >= 1 個，就確保畫出連接線與節點
+        # 只要採集到 2 個點以上，就一定會畫出這條連貫的折線！
         if len(tc_track_coords) >= 2:
             features.insert(0, {
                 "type": "Feature",
-                "properties": { "model": "ECMWF 預測路徑", "color": "#00f2fe", "type": "track_line" },
+                "properties": { "model": "預測路徑線", "color": "#00f2fe", "type": "track_line" },
                 "geometry": { "type": "LineString", "coordinates": tc_track_coords }
             })
             
     except Exception as e:
-        print(f"⚠️ 氣旋網格追蹤分析提示: {e}")
+        print(f"⚠️ 網格追蹤分析提示: {e}")
         
     return features
 
@@ -315,6 +328,7 @@ with open("data/ai_paths.geojson", "w", encoding="utf-8") as f:
     json.dump(ai_paths_data, f, ensure_ascii=False, indent=2)
 
 geojson_json_str = json.dumps(ai_paths_data, ensure_ascii=False)
+
 
 # ==========================================
 # 📊 繪製終極對比圖表
