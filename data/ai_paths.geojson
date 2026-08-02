@@ -265,7 +265,7 @@
       "properties": {
         "time": "08-02 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "24 km/h",
+        "wind_speed": "17 km/h",
         "pressure": "1005.1 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -286,7 +286,7 @@
       "properties": {
         "time": "08-02 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "16 km/h",
+        "wind_speed": "10 km/h",
         "pressure": "1003.8 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -307,7 +307,7 @@
       "properties": {
         "time": "08-02 23:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "28 km/h",
+        "wind_speed": "23 km/h",
         "pressure": "1007.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -328,7 +328,7 @@
       "properties": {
         "time": "08-03 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "27 km/h",
+        "wind_speed": "26 km/h",
         "pressure": "1006.3 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -349,7 +349,7 @@
       "properties": {
         "time": "08-03 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "30 km/h",
+        "wind_speed": "23 km/h",
         "pressure": "1005.3 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -370,7 +370,7 @@
       "properties": {
         "time": "08-03 08:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "31 km/h",
+        "wind_speed": "22 km/h",
         "pressure": "1006.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -391,7 +391,7 @@
       "properties": {
         "time": "08-03 11:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "24 km/h",
+        "wind_speed": "22 km/h",
         "pressure": "1007.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -412,7 +412,7 @@
       "properties": {
         "time": "08-03 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "20 km/h",
+        "wind_speed": "19 km/h",
         "pressure": "1005.9 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -433,7 +433,7 @@
       "properties": {
         "time": "08-03 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "21 km/h",
+        "wind_speed": "20 km/h",
         "pressure": "1004.1 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -454,7 +454,7 @@
       "properties": {
         "time": "08-03 20:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "26 km/h",
+        "wind_speed": "22 km/h",
         "pressure": "1006.1 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -475,7 +475,7 @@
       "properties": {
         "time": "08-04 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "29 km/h",
+        "wind_speed": "32 km/h",
         "pressure": "1004.7 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -496,7 +496,7 @@
       "properties": {
         "time": "08-04 08:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "28 km/h",
+        "wind_speed": "30 km/h",
         "pressure": "1006.3 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -538,7 +538,7 @@
       "properties": {
         "time": "08-04 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "32 km/h",
+        "wind_speed": "33 km/h",
         "pressure": "1004.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -559,7 +559,7 @@
       "properties": {
         "time": "08-04 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "31 km/h",
+        "wind_speed": "32 km/h",
         "pressure": "1003.3 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -580,7 +580,7 @@
       "properties": {
         "time": "08-04 20:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "25 km/h",
+        "wind_speed": "27 km/h",
         "pressure": "1004.0 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -601,7 +601,7 @@
       "properties": {
         "time": "08-05 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "33 km/h",
+        "wind_speed": "34 km/h",
         "pressure": "1003.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -622,7 +622,7 @@
       "properties": {
         "time": "08-05 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "34 km/h",
+        "wind_speed": "31 km/h",
         "pressure": "1002.8 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -685,7 +685,7 @@
       "properties": {
         "time": "08-05 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "37 km/h",
+        "wind_speed": "36 km/h",
         "pressure": "1001.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -706,7 +706,7 @@
       "properties": {
         "time": "08-05 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "39 km/h",
+        "wind_speed": "37 km/h",
         "pressure": "1000.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -727,7 +727,7 @@
       "properties": {
         "time": "08-05 20:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "38 km/h",
+        "wind_speed": "37 km/h",
         "pressure": "1001.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -748,7 +748,7 @@
       "properties": {
         "time": "08-06 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "28 km/h",
+        "wind_speed": "34 km/h",
         "pressure": "1001.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -811,7 +811,7 @@
       "properties": {
         "time": "08-06 11:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "42 km/h",
+        "wind_speed": "41 km/h",
         "pressure": "1002.2 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
@@ -853,7 +853,7 @@
       "properties": {
         "time": "08-06 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "45 km/h",
+        "wind_speed": "43 km/h",
         "pressure": "998.2 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
@@ -874,10 +874,10 @@
       "properties": {
         "time": "08-06 20:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "39 km/h",
+        "wind_speed": "41 km/h",
         "pressure": "999.1 hPa",
-        "category": "熱帶低氣壓",
-        "color": "#3b82f6",
+        "category": "熱帶風暴",
+        "color": "#06b6d4",
         "dist_hk": "424 km",
         "position": "19.6°N, 111.3°E",
         "type": "track_point"
@@ -895,7 +895,7 @@
       "properties": {
         "time": "08-06 23:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "33 km/h",
+        "wind_speed": "39 km/h",
         "pressure": "1000.3 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -916,10 +916,10 @@
       "properties": {
         "time": "08-07 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "40 km/h",
+        "wind_speed": "41 km/h",
         "pressure": "998.3 hPa",
-        "category": "熱帶低氣壓",
-        "color": "#3b82f6",
+        "category": "熱帶風暴",
+        "color": "#06b6d4",
         "dist_hk": "356 km",
         "position": "20.0°N, 111.8°E",
         "type": "track_point"
@@ -937,7 +937,7 @@
       "properties": {
         "time": "08-07 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "30 km/h",
+        "wind_speed": "39 km/h",
         "pressure": "997.1 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -958,7 +958,7 @@
       "properties": {
         "time": "08-07 08:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "27 km/h",
+        "wind_speed": "26 km/h",
         "pressure": "997.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -979,7 +979,7 @@
       "properties": {
         "time": "08-07 11:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "34 km/h",
+        "wind_speed": "39 km/h",
         "pressure": "998.4 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -1000,7 +1000,7 @@
       "properties": {
         "time": "08-07 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "32 km/h",
+        "wind_speed": "34 km/h",
         "pressure": "996.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -1021,7 +1021,7 @@
       "properties": {
         "time": "08-07 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "32 km/h",
+        "wind_speed": "29 km/h",
         "pressure": "995.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -1042,7 +1042,7 @@
       "properties": {
         "time": "08-07 20:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "47 km/h",
+        "wind_speed": "46 km/h",
         "pressure": "996.3 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
@@ -1063,7 +1063,7 @@
       "properties": {
         "time": "08-07 23:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "40 km/h",
+        "wind_speed": "29 km/h",
         "pressure": "996.7 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -1084,7 +1084,7 @@
       "properties": {
         "time": "08-08 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "42 km/h",
+        "wind_speed": "46 km/h",
         "pressure": "994.6 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
@@ -1105,7 +1105,7 @@
       "properties": {
         "time": "08-08 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "46 km/h",
+        "wind_speed": "53 km/h",
         "pressure": "993.5 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
@@ -1126,7 +1126,7 @@
       "properties": {
         "time": "08-08 08:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "30 km/h",
+        "wind_speed": "24 km/h",
         "pressure": "993.4 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -1147,7 +1147,7 @@
       "properties": {
         "time": "08-08 11:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "30 km/h",
+        "wind_speed": "24 km/h",
         "pressure": "992.7 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
@@ -1168,7 +1168,7 @@
       "properties": {
         "time": "08-08 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "27 km/h",
+        "wind_speed": "20 km/h",
         "pressure": "989.9 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
