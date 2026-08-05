@@ -21,11 +21,11 @@
           ],
           [
             119.0,
-            17.5
+            18.0
           ],
           [
             119.0,
-            17.5
+            18.0
           ],
           [
             119.0,
@@ -85,19 +85,19 @@
       "properties": {
         "time": "08-05 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "58 km/h",
-        "pressure": "997.6 hPa",
-        "category": "熱帶風暴",
-        "color": "#06b6d4",
-        "dist_hk": "736 km",
-        "position": "17.5°N, 119.0°E",
+        "wind_speed": "19 km/h",
+        "pressure": "997.1 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "696 km",
+        "position": "18.0°N, 119.0°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
           119.0,
-          17.5
+          18.0
         ]
       }
     },
@@ -106,19 +106,19 @@
       "properties": {
         "time": "08-05 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "61 km/h",
+        "wind_speed": "28 km/h",
         "pressure": "997.0 hPa",
-        "category": "熱帶風暴",
-        "color": "#06b6d4",
-        "dist_hk": "736 km",
-        "position": "17.5°N, 119.0°E",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "696 km",
+        "position": "18.0°N, 119.0°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
           119.0,
-          17.5
+          18.0
         ]
       }
     },
@@ -127,8 +127,8 @@
       "properties": {
         "time": "08-05 20:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "48 km/h",
-        "pressure": "998.9 hPa",
+        "wind_speed": "44 km/h",
+        "pressure": "999.4 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
         "dist_hk": "696 km",
@@ -148,8 +148,8 @@
       "properties": {
         "time": "08-05 23:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "36 km/h",
-        "pressure": "1002.4 hPa",
+        "wind_speed": "40 km/h",
+        "pressure": "1002.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
         "dist_hk": "696 km",
