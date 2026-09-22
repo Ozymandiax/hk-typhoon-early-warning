@@ -20,124 +20,132 @@
             16.25
           ],
           [
-            115.62,
-            15.92
+            116.88,
+            16.0
           ],
           [
-            114.5,
-            16.5
+            114.71,
+            16.47
           ],
           [
-            114.88,
-            16.24
+            113.45,
+            16.05
           ],
           [
-            114.45,
-            16.42
-          ],
-          [
-            114.46,
-            16.08
-          ],
-          [
-            115.23,
-            16.16
-          ],
-          [
-            114.37,
-            16.37
-          ],
-          [
-            114.56,
-            16.54
-          ],
-          [
-            112.82,
-            15.82
-          ],
-          [
-            112.5,
-            16.22
-          ],
-          [
-            115.03,
-            16.16
-          ],
-          [
-            113.28,
-            16.78
-          ],
-          [
-            113.98,
-            17.22
-          ],
-          [
-            114.98,
-            17.11
-          ],
-          [
-            114.77,
-            16.91
-          ],
-          [
-            114.02,
-            17.75
-          ],
-          [
-            113.62,
-            18.14
-          ],
-          [
-            114.04,
-            18.11
-          ],
-          [
-            114.52,
-            19.09
-          ],
-          [
-            115.14,
-            16.86
-          ],
-          [
-            114.43,
-            16.78
+            114.65,
+            16.06
           ],
           [
             114.7,
-            17.58
+            16.54
           ],
           [
-            115.03,
-            18.68
+            114.59,
+            16.1
           ],
           [
-            114.69,
-            20.09
+            114.97,
+            16.21
           ],
           [
-            114.82,
-            19.99
+            113.44,
+            16.15
           ],
           [
-            115.22,
-            19.01
+            114.26,
+            16.55
           ],
           [
-            114.81,
-            19.42
+            114.62,
+            16.38
           ],
           [
-            115.92,
-            20.77
+            113.46,
+            16.39
           ],
           [
-            115.99,
-            22.32
+            115.29,
+            16.43
           ],
           [
-            113.9,
-            21.39
+            114.38,
+            17.08
+          ],
+          [
+            113.98,
+            17.55
+          ],
+          [
+            115.18,
+            16.86
+          ],
+          [
+            114.84,
+            16.75
+          ],
+          [
+            114.4,
+            17.63
+          ],
+          [
+            113.82,
+            18.07
+          ],
+          [
+            114.0,
+            18.3
+          ],
+          [
+            114.92,
+            18.27
+          ],
+          [
+            115.07,
+            17.59
+          ],
+          [
+            114.45,
+            16.55
+          ],
+          [
+            114.84,
+            17.06
+          ],
+          [
+            116.01,
+            17.52
+          ],
+          [
+            114.79,
+            19.36
+          ],
+          [
+            114.71,
+            19.74
+          ],
+          [
+            114.9,
+            18.85
+          ],
+          [
+            114.56,
+            17.93
+          ],
+          [
+            116.02,
+            20.13
+          ],
+          [
+            116.09,
+            22.79
+          ],
+          [
+            115.16,
+            21.18
+          ],
+          [
+            113.31,
+            21.82
           ],
           [
             113.52,
@@ -197,40 +205,61 @@
       "properties": {
         "time": "09-22 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "23 km/h",
+        "wind_speed": "22 km/h",
         "pressure": "1009.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "728 km",
-        "position": "15.92°N, 115.62°E",
+        "dist_hk": "758 km",
+        "position": "16.0°N, 116.88°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.62,
-          15.92
+          116.88,
+          16.0
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "time": "09-22 23:00",
+        "time": "09-22 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "29 km/h",
-        "pressure": "1012.0 hPa",
+        "wind_speed": "28 km/h",
+        "pressure": "1008.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "648 km",
-        "position": "16.5°N, 114.5°E",
+        "dist_hk": "653 km",
+        "position": "16.47°N, 114.71°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.5,
-          16.5
+          114.71,
+          16.47
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "09-22 20:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "24 km/h",
+        "pressure": "1010.5 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "701 km",
+        "position": "16.05°N, 113.45°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          113.45,
+          16.05
         ]
       }
     },
@@ -239,19 +268,19 @@
       "properties": {
         "time": "09-23 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "26 km/h",
-        "pressure": "1010.6 hPa",
+        "wind_speed": "25 km/h",
+        "pressure": "1010.7 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "680 km",
-        "position": "16.24°N, 114.88°E",
+        "dist_hk": "698 km",
+        "position": "16.06°N, 114.65°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.88,
-          16.24
+          114.65,
+          16.06
         ]
       }
     },
@@ -260,19 +289,19 @@
       "properties": {
         "time": "09-23 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "26 km/h",
+        "wind_speed": "27 km/h",
         "pressure": "1010.0 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "657 km",
-        "position": "16.42°N, 114.45°E",
+        "dist_hk": "645 km",
+        "position": "16.54°N, 114.7°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.45,
-          16.42
+          114.7,
+          16.54
         ]
       }
     },
@@ -281,19 +310,19 @@
       "properties": {
         "time": "09-23 08:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "23 km/h",
-        "pressure": "1011.2 hPa",
+        "wind_speed": "25 km/h",
+        "pressure": "1011.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "694 km",
-        "position": "16.08°N, 114.46°E",
+        "dist_hk": "693 km",
+        "position": "16.1°N, 114.59°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.46,
-          16.08
+          114.59,
+          16.1
         ]
       }
     },
@@ -302,19 +331,40 @@
       "properties": {
         "time": "09-23 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "21 km/h",
+        "wind_speed": "22 km/h",
         "pressure": "1010.4 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "694 km",
-        "position": "16.16°N, 115.23°E",
+        "dist_hk": "684 km",
+        "position": "16.21°N, 114.97°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.23,
-          16.16
+          114.97,
+          16.21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "09-23 17:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "23 km/h",
+        "pressure": "1008.8 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "690 km",
+        "position": "16.15°N, 113.44°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          113.44,
+          16.15
         ]
       }
     },
@@ -324,18 +374,18 @@
         "time": "09-23 20:00",
         "model": "ECMWF 質心追蹤",
         "wind_speed": "24 km/h",
-        "pressure": "1010.8 hPa",
+        "pressure": "1010.9 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "662 km",
-        "position": "16.37°N, 114.37°E",
+        "dist_hk": "642 km",
+        "position": "16.55°N, 114.26°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.37,
-          16.37
+          114.26,
+          16.55
         ]
       }
     },
@@ -344,19 +394,19 @@
       "properties": {
         "time": "09-24 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "23 km/h",
-        "pressure": "1010.9 hPa",
+        "wind_speed": "19 km/h",
+        "pressure": "1011.0 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "644 km",
-        "position": "16.54°N, 114.56°E",
+        "dist_hk": "662 km",
+        "position": "16.38°N, 114.62°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.56,
-          16.54
+          114.62,
+          16.38
         ]
       }
     },
@@ -365,40 +415,19 @@
       "properties": {
         "time": "09-24 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "18 km/h",
-        "pressure": "1010.0 hPa",
+        "wind_speed": "22 km/h",
+        "pressure": "1010.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "736 km",
-        "position": "15.82°N, 112.82°E",
+        "dist_hk": "663 km",
+        "position": "16.39°N, 113.46°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          112.82,
-          15.82
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "time": "09-24 08:00",
-        "model": "ECMWF 質心追蹤",
-        "wind_speed": "19 km/h",
-        "pressure": "1011.9 hPa",
-        "category": "熱帶低氣壓",
-        "color": "#3b82f6",
-        "dist_hk": "700 km",
-        "position": "16.22°N, 112.5°E",
-        "type": "track_point"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          112.5,
-          16.22
+          113.46,
+          16.39
         ]
       }
     },
@@ -407,19 +436,19 @@
       "properties": {
         "time": "09-24 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "18 km/h",
-        "pressure": "1010.2 hPa",
+        "wind_speed": "23 km/h",
+        "pressure": "1010.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "691 km",
-        "position": "16.16°N, 115.03°E",
+        "dist_hk": "665 km",
+        "position": "16.43°N, 115.29°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.03,
-          16.16
+          115.29,
+          16.43
         ]
       }
     },
@@ -428,19 +457,19 @@
       "properties": {
         "time": "09-24 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "21 km/h",
-        "pressure": "1009.2 hPa",
+        "wind_speed": "24 km/h",
+        "pressure": "1009.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "623 km",
-        "position": "16.78°N, 113.28°E",
+        "dist_hk": "583 km",
+        "position": "17.08°N, 114.38°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          113.28,
-          16.78
+          114.38,
+          17.08
         ]
       }
     },
@@ -450,18 +479,18 @@
         "time": "09-24 20:00",
         "model": "ECMWF 質心追蹤",
         "wind_speed": "26 km/h",
-        "pressure": "1011.1 hPa",
+        "pressure": "1011.3 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "567 km",
-        "position": "17.22°N, 113.98°E",
+        "dist_hk": "531 km",
+        "position": "17.55°N, 113.98°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
           113.98,
-          17.22
+          17.55
         ]
       }
     },
@@ -471,18 +500,18 @@
         "time": "09-25 02:00",
         "model": "ECMWF 質心追蹤",
         "wind_speed": "26 km/h",
-        "pressure": "1011.1 hPa",
+        "pressure": "1011.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "585 km",
-        "position": "17.11°N, 114.98°E",
+        "dist_hk": "616 km",
+        "position": "16.86°N, 115.18°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.98,
-          17.11
+          115.18,
+          16.86
         ]
       }
     },
@@ -491,19 +520,19 @@
       "properties": {
         "time": "09-25 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "23 km/h",
-        "pressure": "1010.5 hPa",
+        "wind_speed": "22 km/h",
+        "pressure": "1010.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "605 km",
-        "position": "16.91°N, 114.77°E",
+        "dist_hk": "623 km",
+        "position": "16.75°N, 114.84°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.77,
-          16.91
+          114.84,
+          16.75
         ]
       }
     },
@@ -512,19 +541,19 @@
       "properties": {
         "time": "09-25 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "23 km/h",
-        "pressure": "1010.3 hPa",
+        "wind_speed": "21 km/h",
+        "pressure": "1010.4 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "508 km",
-        "position": "17.75°N, 114.02°E",
+        "dist_hk": "522 km",
+        "position": "17.63°N, 114.4°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.02,
-          17.75
+          114.4,
+          17.63
         ]
       }
     },
@@ -533,19 +562,19 @@
       "properties": {
         "time": "09-25 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "22 km/h",
-        "pressure": "1008.8 hPa",
+        "wind_speed": "23 km/h",
+        "pressure": "1009.1 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "468 km",
-        "position": "18.14°N, 113.62°E",
+        "dist_hk": "474 km",
+        "position": "18.07°N, 113.82°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          113.62,
-          18.14
+          113.82,
+          18.07
         ]
       }
     },
@@ -554,19 +583,19 @@
       "properties": {
         "time": "09-25 20:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "26 km/h",
-        "pressure": "1009.9 hPa",
+        "wind_speed": "25 km/h",
+        "pressure": "1010.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "468 km",
-        "position": "18.11°N, 114.04°E",
+        "dist_hk": "447 km",
+        "position": "18.3°N, 114.0°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.04,
-          18.11
+          114.0,
+          18.3
         ]
       }
     },
@@ -575,19 +604,19 @@
       "properties": {
         "time": "09-25 23:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "24 km/h",
-        "pressure": "1011.5 hPa",
+        "wind_speed": "25 km/h",
+        "pressure": "1011.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "361 km",
-        "position": "19.09°N, 114.52°E",
+        "dist_hk": "457 km",
+        "position": "18.27°N, 114.92°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.52,
-          19.09
+          114.92,
+          18.27
         ]
       }
     },
@@ -596,19 +625,19 @@
       "properties": {
         "time": "09-26 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "25 km/h",
-        "pressure": "1009.8 hPa",
+        "wind_speed": "23 km/h",
+        "pressure": "1010.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "615 km",
-        "position": "16.86°N, 115.14°E",
+        "dist_hk": "534 km",
+        "position": "17.59°N, 115.07°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.14,
-          16.86
+          115.07,
+          17.59
         ]
       }
     },
@@ -617,19 +646,19 @@
       "properties": {
         "time": "09-26 05:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "25 km/h",
-        "pressure": "1009.4 hPa",
+        "wind_speed": "22 km/h",
+        "pressure": "1009.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "617 km",
-        "position": "16.78°N, 114.43°E",
+        "dist_hk": "642 km",
+        "position": "16.55°N, 114.45°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.43,
-          16.78
+          114.45,
+          16.55
         ]
       }
     },
@@ -638,19 +667,19 @@
       "properties": {
         "time": "09-26 08:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "23 km/h",
-        "pressure": "1011.0 hPa",
+        "wind_speed": "25 km/h",
+        "pressure": "1011.1 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "530 km",
-        "position": "17.58°N, 114.7°E",
+        "dist_hk": "589 km",
+        "position": "17.06°N, 114.84°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.7,
-          17.58
+          114.84,
+          17.06
         ]
       }
     },
@@ -659,19 +688,19 @@
       "properties": {
         "time": "09-26 11:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "26 km/h",
+        "wind_speed": "23 km/h",
         "pressure": "1011.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "414 km",
-        "position": "18.68°N, 115.03°E",
+        "dist_hk": "567 km",
+        "position": "17.52°N, 116.01°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.03,
-          18.68
+          116.01,
+          17.52
         ]
       }
     },
@@ -680,19 +709,19 @@
       "properties": {
         "time": "09-26 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "21 km/h",
-        "pressure": "1008.6 hPa",
+        "wind_speed": "24 km/h",
+        "pressure": "1008.8 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "254 km",
-        "position": "20.09°N, 114.69°E",
+        "dist_hk": "335 km",
+        "position": "19.36°N, 114.79°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.69,
-          20.09
+          114.79,
+          19.36
         ]
       }
     },
@@ -701,19 +730,19 @@
       "properties": {
         "time": "09-26 23:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "25 km/h",
-        "pressure": "1010.2 hPa",
+        "wind_speed": "23 km/h",
+        "pressure": "1010.6 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "268 km",
-        "position": "19.99°N, 114.82°E",
+        "dist_hk": "292 km",
+        "position": "19.74°N, 114.71°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.82,
-          19.99
+          114.71,
+          19.74
         ]
       }
     },
@@ -722,19 +751,19 @@
       "properties": {
         "time": "09-27 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "28 km/h",
-        "pressure": "1009.0 hPa",
+        "wind_speed": "26 km/h",
+        "pressure": "1009.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "384 km",
-        "position": "19.01°N, 115.22°E",
+        "dist_hk": "393 km",
+        "position": "18.85°N, 114.9°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.22,
-          19.01
+          114.9,
+          18.85
         ]
       }
     },
@@ -743,19 +772,19 @@
       "properties": {
         "time": "09-27 08:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "30 km/h",
-        "pressure": "1009.6 hPa",
+        "wind_speed": "24 km/h",
+        "pressure": "1010.0 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "329 km",
-        "position": "19.42°N, 114.81°E",
+        "dist_hk": "490 km",
+        "position": "17.93°N, 114.56°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          114.81,
-          19.42
+          114.56,
+          17.93
         ]
       }
     },
@@ -764,19 +793,19 @@
       "properties": {
         "time": "09-27 11:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "27 km/h",
-        "pressure": "1009.4 hPa",
+        "wind_speed": "22 km/h",
+        "pressure": "1010.1 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "250 km",
-        "position": "20.77°N, 115.92°E",
+        "dist_hk": "310 km",
+        "position": "20.13°N, 116.02°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.92,
-          20.77
+          116.02,
+          20.13
         ]
       }
     },
@@ -785,19 +814,40 @@
       "properties": {
         "time": "09-27 23:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "21 km/h",
+        "wind_speed": "23 km/h",
         "pressure": "1009.2 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "187 km",
-        "position": "22.32°N, 115.99°E",
+        "dist_hk": "204 km",
+        "position": "22.79°N, 116.09°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.99,
-          22.32
+          116.09,
+          22.79
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "09-28 11:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "22 km/h",
+        "pressure": "1010.5 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "163 km",
+        "position": "21.18°N, 115.16°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.16,
+          21.18
         ]
       }
     },
@@ -806,19 +856,19 @@
       "properties": {
         "time": "09-28 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "27 km/h",
-        "pressure": "1008.3 hPa",
+        "wind_speed": "21 km/h",
+        "pressure": "1008.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "107 km",
-        "position": "21.39°N, 113.9°E",
+        "dist_hk": "105 km",
+        "position": "21.82°N, 113.31°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          113.9,
-          21.39
+          113.31,
+          21.82
         ]
       }
     },
