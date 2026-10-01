@@ -4,21 +4,88 @@
     {
       "type": "Feature",
       "properties": {
+        "model": "預測軌跡連線",
+        "color": "#00f2fe",
+        "type": "track_line"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            114.66,
+            19.61
+          ],
+          [
+            112.41,
+            19.97
+          ],
+          [
+            111.69,
+            20.69
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "time": "10-01 14:00",
         "model": "ECMWF 質心追蹤",
         "wind_speed": "15 km/h",
-        "pressure": "1011.0 hPa",
+        "pressure": "1011.4 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "158 km",
-        "position": "20.94°N, 113.81°E",
+        "dist_hk": "306 km",
+        "position": "19.61°N, 114.66°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          113.81,
-          20.94
+          114.66,
+          19.61
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "10-01 17:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "16 km/h",
+        "pressure": "1010.2 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "319 km",
+        "position": "19.97°N, 112.41°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          112.41,
+          19.97
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "10-01 20:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "16 km/h",
+        "pressure": "1011.6 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "314 km",
+        "position": "20.69°N, 111.69°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          111.69,
+          20.69
         ]
       }
     }
