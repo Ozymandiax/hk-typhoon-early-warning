@@ -12,46 +12,25 @@
         "type": "LineString",
         "coordinates": [
           [
-            117.43,
-            15.29
-          ],
-          [
-            117.44,
-            15.56
-          ],
-          [
-            117.62,
+            117.2,
             15.5
           ],
           [
-            116.1,
-            15.2
+            116.6,
+            15.3
           ],
           [
-            115.46,
-            15.31
+            117.22,
+            15.44
+          ],
+          [
+            116.36,
+            15.36
+          ],
+          [
+            115.64,
+            15.18
           ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "time": "11-09 17:00",
-        "model": "ECMWF 質心追蹤",
-        "wind_speed": "48 km/h",
-        "pressure": "1012.0 hPa",
-        "category": "熱帶風暴",
-        "color": "#06b6d4",
-        "dist_hk": "854 km",
-        "position": "15.29°N, 117.43°E",
-        "type": "track_point"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          117.43,
-          15.29
         ]
       }
     },
@@ -60,19 +39,40 @@
       "properties": {
         "time": "11-10 02:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "48 km/h",
-        "pressure": "1011.7 hPa",
+        "wind_speed": "49 km/h",
+        "pressure": "1012.0 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
-        "dist_hk": "826 km",
-        "position": "15.56°N, 117.44°E",
+        "dist_hk": "822 km",
+        "position": "15.5°N, 117.2°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          117.44,
-          15.56
+          117.2,
+          15.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "11-10 05:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "51 km/h",
+        "pressure": "1011.9 hPa",
+        "category": "熱帶風暴",
+        "color": "#06b6d4",
+        "dist_hk": "821 km",
+        "position": "15.3°N, 116.6°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          116.6,
+          15.3
         ]
       }
     },
@@ -81,19 +81,19 @@
       "properties": {
         "time": "11-10 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "48 km/h",
-        "pressure": "1011.5 hPa",
+        "wind_speed": "47 km/h",
+        "pressure": "1011.7 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
-        "dist_hk": "841 km",
-        "position": "15.5°N, 117.62°E",
+        "dist_hk": "829 km",
+        "position": "15.44°N, 117.22°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          117.62,
-          15.5
+          117.22,
+          15.44
         ]
       }
     },
@@ -102,19 +102,19 @@
       "properties": {
         "time": "11-10 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "46 km/h",
+        "wind_speed": "50 km/h",
         "pressure": "1011.6 hPa",
         "category": "熱帶風暴",
         "color": "#06b6d4",
-        "dist_hk": "817 km",
-        "position": "15.2°N, 116.1°E",
+        "dist_hk": "807 km",
+        "position": "15.36°N, 116.36°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          116.1,
-          15.2
+          116.36,
+          15.36
         ]
       }
     },
@@ -124,18 +124,18 @@
         "time": "11-11 17:00",
         "model": "ECMWF 質心追蹤",
         "wind_speed": "37 km/h",
-        "pressure": "1012.0 hPa",
+        "pressure": "1011.8 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "791 km",
-        "position": "15.31°N, 115.46°E",
+        "dist_hk": "809 km",
+        "position": "15.18°N, 115.64°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.46,
-          15.31
+          115.64,
+          15.18
         ]
       }
     }
