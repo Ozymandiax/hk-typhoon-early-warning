@@ -12,16 +12,12 @@
         "type": "LineString",
         "coordinates": [
           [
-            116.12,
-            20.93
+            117.13,
+            20.87
           ],
           [
-            117.12,
-            22.25
-          ],
-          [
-            117.32,
-            21.93
+            117.6,
+            21.8
           ]
         ]
       }
@@ -31,19 +27,19 @@
       "properties": {
         "time": "11-14 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "39 km/h",
-        "pressure": "1010.9 hPa",
+        "wind_speed": "36 km/h",
+        "pressure": "1010.5 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "254 km",
-        "position": "20.93°N, 116.12°E",
+        "dist_hk": "346 km",
+        "position": "20.87°N, 117.13°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          116.12,
-          20.93
+          117.13,
+          20.87
         ]
       }
     },
@@ -52,40 +48,19 @@
       "properties": {
         "time": "11-14 17:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "34 km/h",
-        "pressure": "1010.1 hPa",
+        "wind_speed": "37 km/h",
+        "pressure": "1010.3 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "304 km",
-        "position": "22.25°N, 117.12°E",
+        "dist_hk": "358 km",
+        "position": "21.8°N, 117.6°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          117.12,
-          22.25
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "time": "11-14 20:00",
-        "model": "ECMWF 質心追蹤",
-        "wind_speed": "33 km/h",
-        "pressure": "1011.7 hPa",
-        "category": "熱帶低氣壓",
-        "color": "#3b82f6",
-        "dist_hk": "327 km",
-        "position": "21.93°N, 117.32°E",
-        "type": "track_point"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          117.32,
-          21.93
+          117.6,
+          21.8
         ]
       }
     }
