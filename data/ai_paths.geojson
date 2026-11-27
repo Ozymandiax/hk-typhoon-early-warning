@@ -4,21 +4,88 @@
     {
       "type": "Feature",
       "properties": {
-        "time": "11-26 17:00",
+        "model": "預測軌跡連線",
+        "color": "#00f2fe",
+        "type": "track_line"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            117.19,
+            16.06
+          ],
+          [
+            115.94,
+            15.59
+          ],
+          [
+            115.58,
+            15.63
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "12-02 14:00",
         "model": "ECMWF 質心追蹤",
-        "wind_speed": "31 km/h",
-        "pressure": "1011.9 hPa",
+        "wind_speed": "35 km/h",
+        "pressure": "1012.0 hPa",
         "category": "熱帶低氣壓",
         "color": "#3b82f6",
-        "dist_hk": "751 km",
-        "position": "15.62°N, 115.05°E",
+        "dist_hk": "765 km",
+        "position": "16.06°N, 117.19°E",
         "type": "track_point"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          115.05,
-          15.62
+          117.19,
+          16.06
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "12-03 14:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "25 km/h",
+        "pressure": "1011.8 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "771 km",
+        "position": "15.59°N, 115.94°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.94,
+          15.59
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": "12-04 02:00",
+        "model": "ECMWF 質心追蹤",
+        "wind_speed": "26 km/h",
+        "pressure": "1011.8 hPa",
+        "category": "熱帶低氣壓",
+        "color": "#3b82f6",
+        "dist_hk": "758 km",
+        "position": "15.63°N, 115.58°E",
+        "type": "track_point"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.58,
+          15.63
         ]
       }
     }
